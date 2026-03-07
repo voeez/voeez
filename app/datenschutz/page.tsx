@@ -10,135 +10,174 @@ export default function DatenschutzPage() {
       <h1 className="text-3xl font-extrabold text-foreground">
         Datenschutzerklärung
       </h1>
-      <p className="mt-2 text-sm text-muted">Stand: März 2025</p>
+      <p className="mt-2 text-sm text-muted">Stand: März 2026</p>
 
-      <div className="prose prose-sm mt-10 flex flex-col gap-10 text-sm text-foreground">
+      <div className="mt-10 flex flex-col gap-10 text-sm text-foreground">
+
         {/* 1 */}
         <section>
-          <h2 className="mb-3 text-base font-semibold">
-            1. Verantwortlicher
-          </h2>
+          <h2 className="mb-3 text-base font-semibold">1. Verantwortlicher</h2>
           <p className="text-muted leading-relaxed">
             Verantwortlicher im Sinne der DSGVO ist:
+            <br /><br />
+            voeez · Lennart Werksnis
             <br />
-            <br />
-            Lennart Schäfer
-            <br />
-            Musterstraße 1, 12345 Musterstadt
+            Erich-Nehlhans-Str. 29, 10247 Berlin
             <br />
             E-Mail:{" "}
-            <a
-              href="mailto:support@voeez.app"
-              className="text-primary underline underline-offset-2"
-            >
-              support@voeez.app
+            <a href="mailto:hello@voeez.com" className="text-primary underline underline-offset-2">
+              hello@voeez.com
             </a>
           </p>
         </section>
 
         {/* 2 */}
         <section>
-          <h2 className="mb-3 text-base font-semibold">
-            2. Erhobene Daten und Zwecke
-          </h2>
-          <p className="text-muted leading-relaxed">
-            Wir verarbeiten folgende personenbezogene Daten:
-          </p>
+          <h2 className="mb-3 text-base font-semibold">2. Erhobene Daten und Zwecke</h2>
+          <p className="text-muted leading-relaxed">Wir verarbeiten folgende personenbezogene Daten:</p>
           <ul className="mt-3 list-disc list-inside space-y-2 text-muted leading-relaxed">
             <li>
               <strong className="text-foreground">E-Mail-Adresse</strong> –
-              zur Kontoerstellung, Anmeldung und Kundenkommunikation
-              (Rechtsgrundlage: Art. 6 Abs. 1 lit. b DSGVO)
+              zur Kontoerstellung, Anmeldung und Kommunikation
+              (Art. 6 Abs. 1 lit. b DSGVO)
             </li>
             <li>
-              <strong className="text-foreground">
-                Zahlungsdaten (Stripe)
-              </strong>{" "}
-              – werden ausschließlich von Stripe verarbeitet; wir speichern
-              keine vollständigen Kreditkartendaten
-              (Rechtsgrundlage: Art. 6 Abs. 1 lit. b DSGVO)
+              <strong className="text-foreground">Zahlungsdaten</strong> –
+              werden ausschließlich von Stripe verarbeitet; wir speichern keine Kreditkartendaten
+              (Art. 6 Abs. 1 lit. b DSGVO)
             </li>
             <li>
-              <strong className="text-foreground">Nutzungsstatistiken</strong>{" "}
-              – anonymisierte Zählung von Transkriptionen und Wörtern zur
-              Darstellung in deinem Dashboard
-              (Rechtsgrundlage: Art. 6 Abs. 1 lit. f DSGVO)
+              <strong className="text-foreground">Nutzungsstatistiken</strong> –
+              Anzahl Transkriptionen, Wörter und Zeitersparnis zur Anzeige im Dashboard
+              (Art. 6 Abs. 1 lit. b DSGVO)
             </li>
             <li>
               <strong className="text-foreground">Sprachdaten</strong> –
-              werden im Offline-Modus ausschließlich lokal auf deinem Gerät
-              verarbeitet und verlassen dieses nicht; im Online-Modus werden
-              sie an die Whisper-API übertragen
-              (Rechtsgrundlage: Art. 6 Abs. 1 lit. b DSGVO)
+              im Offline-Modus ausschließlich lokal verarbeitet; im Online-Modus an die
+              Whisper-API übertragen und nicht dauerhaft gespeichert
+              (Art. 6 Abs. 1 lit. b DSGVO)
+            </li>
+            <li>
+              <strong className="text-foreground">IP-Adresse / technische Zugriffsdaten</strong> –
+              für Sicherheit und Betrieb (Rate Limiting, Spam-Schutz), nicht dauerhaft gespeichert
+              (Art. 6 Abs. 1 lit. f DSGVO)
             </li>
           </ul>
         </section>
 
         {/* 3 */}
         <section>
-          <h2 className="mb-3 text-base font-semibold">
-            3. Drittanbieter
-          </h2>
-          <div className="space-y-4 text-muted leading-relaxed">
+          <h2 className="mb-3 text-base font-semibold">3. Eingesetzte Drittanbieter</h2>
+          <div className="space-y-5 text-muted leading-relaxed">
+
             <div>
-              <p className="font-medium text-foreground">Supabase</p>
+              <p className="font-medium text-foreground">Supabase (Authentifizierung & Datenbank)</p>
               <p>
-                Wir nutzen Supabase (Supabase Inc., San Francisco, USA) als
-                Authentifizierungs- und Datenbankdienst. Supabase verarbeitet
-                deine E-Mail-Adresse und gespeicherte Nutzungsdaten. Weitere
-                Informationen:{" "}
-                <a
-                  href="https://supabase.com/privacy"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="text-primary underline underline-offset-2"
-                >
-                  supabase.com/privacy
+                Supabase Inc., San Francisco, USA. Verarbeitet E-Mail-Adresse,
+                Session-Tokens und Nutzungsstatistiken. Datenübertragung in die USA
+                auf Basis von Standardvertragsklauseln (SCC).{" "}
+                <a href="https://supabase.com/privacy" target="_blank" rel="noopener noreferrer" className="text-primary underline underline-offset-2">
+                  Datenschutz Supabase
                 </a>
               </p>
             </div>
+
             <div>
-              <p className="font-medium text-foreground">Stripe</p>
+              <p className="font-medium text-foreground">Stripe (Zahlungsabwicklung)</p>
               <p>
-                Für die Zahlungsabwicklung verwenden wir Stripe (Stripe, Inc.,
-                San Francisco, USA). Bei einem Kauf werden deine
-                Zahlungsdaten direkt an Stripe übermittelt und dort
-                verarbeitet. Weitere Informationen:{" "}
-                <a
-                  href="https://stripe.com/de/privacy"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="text-primary underline underline-offset-2"
-                >
-                  stripe.com/de/privacy
+                Stripe, Inc., San Francisco, USA. Zahlungsdaten werden direkt an Stripe
+                übermittelt und dort verarbeitet. Wir erhalten ausschließlich eine
+                Transaktions-ID. Datenübertragung in die USA auf Basis von SCC.{" "}
+                <a href="https://stripe.com/de/privacy" target="_blank" rel="noopener noreferrer" className="text-primary underline underline-offset-2">
+                  Datenschutz Stripe
                 </a>
               </p>
             </div>
+
+            <div>
+              <p className="font-medium text-foreground">Vercel (Hosting & CDN)</p>
+              <p>
+                Vercel Inc., San Francisco, USA. Unsere Website wird auf der
+                Infrastruktur von Vercel betrieben. Bei jedem Seitenaufruf werden
+                technische Zugriffsdaten (IP-Adresse, Zeitstempel, aufgerufene URL)
+                kurzzeitig in Server-Logs gespeichert. Datenübertragung auf Basis von SCC.{" "}
+                <a href="https://vercel.com/legal/privacy-policy" target="_blank" rel="noopener noreferrer" className="text-primary underline underline-offset-2">
+                  Datenschutz Vercel
+                </a>
+              </p>
+            </div>
+
+            <div>
+              <p className="font-medium text-foreground">Resend (Transaktionale E-Mails)</p>
+              <p>
+                Resend Inc., San Francisco, USA. Wird für den Versand von
+                Bestätigungs- und System-E-Mails (z. B. Registrierungsbestätigung,
+                Passwort-Reset) verwendet. Verarbeitet deine E-Mail-Adresse.
+                Datenübertragung auf Basis von SCC.{" "}
+                <a href="https://resend.com/legal/privacy-policy" target="_blank" rel="noopener noreferrer" className="text-primary underline underline-offset-2">
+                  Datenschutz Resend
+                </a>
+              </p>
+            </div>
+
+            <div>
+              <p className="font-medium text-foreground">Cloudflare Turnstile (CAPTCHA / Bot-Schutz)</p>
+              <p>
+                Cloudflare, Inc., San Francisco, USA. Auf den Login- und
+                Registrierungsseiten wird Cloudflare Turnstile eingesetzt, um
+                automatisierte Angriffe zu verhindern. Dabei werden technische
+                Gerätedaten und IP-Adresse an Cloudflare übermittelt. Es werden
+                keine Tracking-Cookies gesetzt. Datenübertragung auf Basis von SCC.{" "}
+                <a href="https://www.cloudflare.com/de-de/privacypolicy/" target="_blank" rel="noopener noreferrer" className="text-primary underline underline-offset-2">
+                  Datenschutz Cloudflare
+                </a>
+              </p>
+            </div>
+
+            <div>
+              <p className="font-medium text-foreground">Upstash Redis (Rate Limiting)</p>
+              <p>
+                Upstash, Inc. Wird serverseitig für Rate Limiting eingesetzt,
+                um Missbrauch zu verhindern. Es werden ausschließlich anonymisierte
+                IP-Adressen temporär gespeichert und nicht für andere Zwecke verwendet.{" "}
+                <a href="https://upstash.com/trust/privacy.pdf" target="_blank" rel="noopener noreferrer" className="text-primary underline underline-offset-2">
+                  Datenschutz Upstash
+                </a>
+              </p>
+            </div>
+
           </div>
         </section>
 
         {/* 4 */}
         <section>
-          <h2 className="mb-3 text-base font-semibold">
-            4. Speicherdauer
-          </h2>
+          <h2 className="mb-3 text-base font-semibold">4. Cookies und lokaler Speicher</h2>
           <p className="text-muted leading-relaxed">
-            Wir speichern deine Daten nur so lange, wie es für die genannten
-            Zwecke erforderlich ist oder gesetzliche Aufbewahrungspflichten
-            bestehen. Nach Kündigung deines Kontos werden deine Daten
-            innerhalb von 30 Tagen gelöscht, sofern keine
-            Aufbewahrungspflichten dem entgegenstehen.
+            Diese Website verwendet ausschließlich technisch notwendige Cookies
+            für die Authentifizierung (Session-Cookies von Supabase). Diese sind
+            zwingend erforderlich, damit du eingeloggt bleiben kannst. Es werden{" "}
+            <strong className="text-foreground">keine Tracking-, Analyse- oder Werbe-Cookies</strong>{" "}
+            eingesetzt. Da ausschließlich notwendige Cookies verwendet werden,
+            ist kein gesondertes Einverständnis erforderlich.
           </p>
         </section>
 
         {/* 5 */}
         <section>
-          <h2 className="mb-3 text-base font-semibold">
-            5. Deine Rechte
-          </h2>
+          <h2 className="mb-3 text-base font-semibold">5. Speicherdauer</h2>
           <p className="text-muted leading-relaxed">
-            Du hast gemäß DSGVO folgende Rechte:
+            Wir speichern deine Daten nur so lange, wie es für die genannten
+            Zwecke erforderlich ist oder gesetzliche Aufbewahrungspflichten
+            bestehen. Nach Löschung deines Kontos werden personenbezogene Daten
+            innerhalb von 30 Tagen entfernt, sofern keine gesetzlichen
+            Aufbewahrungspflichten entgegenstehen.
           </p>
+        </section>
+
+        {/* 6 */}
+        <section>
+          <h2 className="mb-3 text-base font-semibold">6. Deine Rechte</h2>
+          <p className="text-muted leading-relaxed">Du hast gemäß DSGVO folgende Rechte:</p>
           <ul className="mt-3 list-disc list-inside space-y-1 text-muted leading-relaxed">
             <li>Recht auf Auskunft (Art. 15 DSGVO)</li>
             <li>Recht auf Berichtigung (Art. 16 DSGVO)</li>
@@ -149,44 +188,27 @@ export default function DatenschutzPage() {
           </ul>
           <p className="mt-3 text-muted leading-relaxed">
             Zur Ausübung deiner Rechte wende dich an:{" "}
-            <a
-              href="mailto:support@voeez.app"
-              className="text-primary underline underline-offset-2"
-            >
-              support@voeez.app
+            <a href="mailto:hello@voeez.com" className="text-primary underline underline-offset-2">
+              hello@voeez.com
             </a>
-            . Du hast außerdem das Recht, Beschwerde bei einer
-            Datenschutzbehörde einzulegen.
-          </p>
-        </section>
-
-        {/* 6 */}
-        <section>
-          <h2 className="mb-3 text-base font-semibold">6. Cookies</h2>
-          <p className="text-muted leading-relaxed">
-            Diese Website verwendet technisch notwendige Session-Cookies für
-            die Authentifizierung. Es werden keine Tracking- oder
-            Werbe-Cookies eingesetzt.
+            . Du hast außerdem das Recht, Beschwerde bei einer Datenschutzbehörde
+            einzulegen (z. B. Berliner Beauftragte für Datenschutz und Informationsfreiheit).
           </p>
         </section>
 
         {/* 7 */}
         <section>
-          <h2 className="mb-3 text-base font-semibold">
-            7. Änderungen dieser Erklärung
-          </h2>
+          <h2 className="mb-3 text-base font-semibold">7. Änderungen dieser Erklärung</h2>
           <p className="text-muted leading-relaxed">
-            Wir behalten uns vor, diese Datenschutzerklärung bei Bedarf
-            anzupassen. Die aktuelle Version ist stets unter{" "}
-            <Link
-              href="/datenschutz"
-              className="text-primary underline underline-offset-2"
-            >
-              voeez.app/datenschutz
+            Wir behalten uns vor, diese Datenschutzerklärung bei Bedarf anzupassen.
+            Die aktuelle Version ist stets unter{" "}
+            <Link href="/datenschutz" className="text-primary underline underline-offset-2">
+              voeez.com/datenschutz
             </Link>{" "}
             abrufbar.
           </p>
         </section>
+
       </div>
     </div>
   );

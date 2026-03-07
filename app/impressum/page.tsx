@@ -13,14 +13,13 @@ export default function ImpressumPage() {
         <section>
           <h2 className="mb-3 text-base font-semibold">Betreiber</h2>
           <p className="text-muted leading-relaxed">
-            {/* TODO: Hier deinen Namen / Firmennamen eintragen */}
-            Lennart Schäfer
+            voeez
             <br />
-            {/* TODO: Straße + Hausnummer */}
-            Musterstraße 1
+            Lennart Werksnis
             <br />
-            {/* TODO: PLZ + Stadt */}
-            12345 Musterstadt
+            Erich-Nehlhans-Str. 29
+            <br />
+            10247 Berlin
             <br />
             Deutschland
           </p>
@@ -32,10 +31,10 @@ export default function ImpressumPage() {
           <p className="text-muted leading-relaxed">
             E-Mail:{" "}
             <a
-              href="mailto:support@voeez.app"
+              href="mailto:hello@voeez.com"
               className="text-primary underline underline-offset-2"
             >
-              support@voeez.app
+              hello@voeez.com
             </a>
           </p>
         </section>
@@ -57,7 +56,7 @@ export default function ImpressumPage() {
             Verantwortlich für den Inhalt gemäß § 18 Abs. 2 MStV
           </h2>
           <p className="text-muted leading-relaxed">
-            Lennart Schäfer, Anschrift wie oben
+            Lennart Werksnis, Anschrift wie oben
           </p>
         </section>
 
