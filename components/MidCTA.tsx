@@ -1,7 +1,9 @@
 "use client";
 
+import Link from "next/link";
 import { ArrowRight } from "lucide-react";
 import { startCheckout } from "@/lib/checkout";
+import { isBetaMode } from "@/lib/betaMode";
 
 export default function MidCTA() {
   return (
@@ -18,15 +20,27 @@ export default function MidCTA() {
             <p className="text-xl font-bold text-foreground sm:text-2xl">
               Bereit, 2+ Stunden pro Woche zurückzugewinnen?
             </p>
-            <p className="mt-1 text-sm text-muted">Keine Kreditkarte nötig. 7 Tage gratis.</p>
+            <p className="mt-1 text-sm text-muted">
+              {isBetaMode ? "Kostenlos in der Beta. Kein Risiko." : "Keine Kreditkarte nötig. 7 Tage gratis."}
+            </p>
           </div>
-          <button
-            onClick={() => startCheckout("yearly")}
-            className="inline-flex shrink-0 items-center gap-2 rounded-xl bg-gradient-to-r from-primary to-blue-600 px-7 py-3.5 text-base font-semibold text-white shadow-lg shadow-primary/20 transition-all hover:brightness-110 hover:shadow-xl hover:shadow-primary/30"
-          >
-            Jetzt loslegen
-            <ArrowRight size={18} />
-          </button>
+          {isBetaMode ? (
+            <Link
+              href="/signup"
+              className="inline-flex shrink-0 items-center gap-2 rounded-xl bg-gradient-to-r from-primary to-blue-600 px-7 py-3.5 text-base font-semibold text-white shadow-lg shadow-primary/20 transition-all hover:brightness-110 hover:shadow-xl hover:shadow-primary/30"
+            >
+              Jetzt loslegen
+              <ArrowRight size={18} />
+            </Link>
+          ) : (
+            <button
+              onClick={() => startCheckout("yearly")}
+              className="inline-flex shrink-0 items-center gap-2 rounded-xl bg-gradient-to-r from-primary to-blue-600 px-7 py-3.5 text-base font-semibold text-white shadow-lg shadow-primary/20 transition-all hover:brightness-110 hover:shadow-xl hover:shadow-primary/30"
+            >
+              Jetzt loslegen
+              <ArrowRight size={18} />
+            </button>
+          )}
         </div>
       </div>
     </section>

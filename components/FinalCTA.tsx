@@ -1,8 +1,10 @@
 "use client";
 
+import Link from "next/link";
 import { ArrowRight } from "lucide-react";
 import Image from "next/image";
 import { startCheckout } from "@/lib/checkout";
+import { isBetaMode } from "@/lib/betaMode";
 
 export default function FinalCTA() {
   return (
@@ -35,7 +37,7 @@ export default function FinalCTA() {
           <div className="relative z-10">
             <div className="mb-6 inline-flex items-center rounded-full border border-white/20 bg-white/10 px-4 py-1.5 backdrop-blur-sm">
               <span className="text-xs font-semibold tracking-wide text-white/90">
-                30-Tage Geld-zurück-Garantie
+                {isBetaMode ? "🎉 Kostenlose Beta — 30 Tage gratis" : "30-Tage Geld-zurück-Garantie"}
               </span>
             </div>
 
@@ -45,21 +47,31 @@ export default function FinalCTA() {
               mit einem Klick.
             </h2>
             <p className="mx-auto mt-4 max-w-md text-lg text-white/75">
-              Schließ dich 500+ Mac-Nutzern an, die nie wieder unnötig tippen.
+              Schließ dich Mac-Nutzern an, die nie wieder unnötig tippen.
             </p>
 
             <div className="mt-8">
-              <button
-                onClick={() => startCheckout("yearly")}
-                className="inline-flex items-center justify-center gap-2 rounded-xl bg-white px-8 py-4 text-base font-semibold text-primary shadow-xl transition-all hover:shadow-2xl hover:scale-105"
-              >
-                7 Tage kostenlos testen
-                <ArrowRight size={18} />
-              </button>
+              {isBetaMode ? (
+                <Link
+                  href="/signup"
+                  className="inline-flex items-center justify-center gap-2 rounded-xl bg-white px-8 py-4 text-base font-semibold text-primary shadow-xl transition-all hover:shadow-2xl hover:scale-105"
+                >
+                  Jetzt kostenlos registrieren
+                  <ArrowRight size={18} />
+                </Link>
+              ) : (
+                <button
+                  onClick={() => startCheckout("yearly")}
+                  className="inline-flex items-center justify-center gap-2 rounded-xl bg-white px-8 py-4 text-base font-semibold text-primary shadow-xl transition-all hover:shadow-2xl hover:scale-105"
+                >
+                  7 Tage kostenlos testen
+                  <ArrowRight size={18} />
+                </button>
+              )}
             </div>
 
             <p className="mt-5 text-sm text-white/60">
-              Keine Zahlung heute · Kündigung jederzeit · macOS 14+
+              {isBetaMode ? "Keine Kreditkarte · Kein Risiko · macOS 14+" : "Keine Zahlung heute · Kündigung jederzeit · macOS 14+"}
             </p>
           </div>
         </div>

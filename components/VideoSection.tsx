@@ -1,7 +1,9 @@
 "use client";
 
+import Link from "next/link";
 import ScrollReveal from "@/components/ScrollReveal";
 import { startCheckout } from "@/lib/checkout";
+import { isBetaMode } from "@/lib/betaMode";
 import { ArrowRight } from "lucide-react";
 
 export default function VideoSection() {
@@ -41,13 +43,23 @@ export default function VideoSection() {
 
           {/* CTA below video */}
           <div className="mt-8 flex justify-center">
-            <button
-              onClick={() => startCheckout("yearly")}
-              className="inline-flex items-center gap-2 rounded-xl bg-primary px-6 py-3 text-sm font-semibold text-white shadow-lg shadow-primary/20 transition-all hover:bg-primary-dark hover:shadow-xl hover:shadow-primary/30"
-            >
-              7 Tage kostenlos testen
-              <ArrowRight size={16} />
-            </button>
+            {isBetaMode ? (
+              <Link
+                href="/signup"
+                className="inline-flex items-center gap-2 rounded-xl bg-primary px-6 py-3 text-sm font-semibold text-white shadow-lg shadow-primary/20 transition-all hover:bg-primary-dark hover:shadow-xl hover:shadow-primary/30"
+              >
+                Jetzt kostenlos testen
+                <ArrowRight size={16} />
+              </Link>
+            ) : (
+              <button
+                onClick={() => startCheckout("yearly")}
+                className="inline-flex items-center gap-2 rounded-xl bg-primary px-6 py-3 text-sm font-semibold text-white shadow-lg shadow-primary/20 transition-all hover:bg-primary-dark hover:shadow-xl hover:shadow-primary/30"
+              >
+                7 Tage kostenlos testen
+                <ArrowRight size={16} />
+              </button>
+            )}
           </div>
         </ScrollReveal>
       </div>

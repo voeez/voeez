@@ -17,6 +17,8 @@ create table if not exists public.profiles (
   stripe_customer_id     text        unique null,
   stripe_subscription_id text        unique null,
   goose_name             text        null,
+  beta_until             timestamptz null,
+  -- Beta-Zugang läuft bis zu diesem Datum (null = kein Beta-Zugang)
   updated_at             timestamptz not null default now()
 );
 
@@ -85,8 +87,8 @@ language plpgsql
 security definer set search_path = public
 as $$
 begin
-  insert into public.profiles (id, subscription_status)
-  values (new.id, 'inactive')
+  insert into public.profiles (id, subscription_status, beta_until)
+  values (new.id, 'inactive', now() + interval '30 days')
   on conflict (id) do nothing;
   return new;
 end;

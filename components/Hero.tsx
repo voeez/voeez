@@ -4,6 +4,7 @@ import Link from "next/link";
 import NextImage from "next/image";
 import { ArrowRight, CheckCircle } from "lucide-react";
 import { startCheckout } from "@/lib/checkout";
+import { isBetaMode } from "@/lib/betaMode";
 import { useState, useEffect } from "react";
 
 // ─── Animated waveform bars ───────────────────────────────────────────────────
@@ -191,13 +192,23 @@ export default function Hero() {
 
           {/* CTAs */}
           <div className="mt-8 flex flex-col gap-3 sm:flex-row">
-            <button
-              onClick={() => startCheckout("yearly")}
-              className="inline-flex items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-primary to-blue-600 px-6 py-3.5 text-base font-semibold text-white shadow-lg shadow-primary/25 transition-all hover:brightness-110 hover:shadow-xl hover:shadow-primary/35 hover:scale-[1.02]"
-            >
-              7 Tage kostenlos testen
-              <ArrowRight size={18} />
-            </button>
+            {isBetaMode ? (
+              <Link
+                href="/signup"
+                className="inline-flex items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-primary to-blue-600 px-6 py-3.5 text-base font-semibold text-white shadow-lg shadow-primary/25 transition-all hover:brightness-110 hover:shadow-xl hover:shadow-primary/35 hover:scale-[1.02]"
+              >
+                Jetzt kostenlos testen
+                <ArrowRight size={18} />
+              </Link>
+            ) : (
+              <button
+                onClick={() => startCheckout("yearly")}
+                className="inline-flex items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-primary to-blue-600 px-6 py-3.5 text-base font-semibold text-white shadow-lg shadow-primary/25 transition-all hover:brightness-110 hover:shadow-xl hover:shadow-primary/35 hover:scale-[1.02]"
+              >
+                7 Tage kostenlos testen
+                <ArrowRight size={18} />
+              </button>
+            )}
             <Link
               href="#features"
               className="inline-flex items-center justify-center rounded-xl border border-border px-6 py-3.5 text-base font-semibold text-foreground transition-all hover:bg-surface hover:border-primary/30 hover:scale-[1.02]"

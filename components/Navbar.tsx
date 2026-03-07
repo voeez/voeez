@@ -5,10 +5,11 @@ import Link from "next/link";
 import Image from "next/image";
 import { Menu, X, ArrowRight } from "lucide-react";
 import { startCheckout } from "@/lib/checkout";
+import { isBetaMode } from "@/lib/betaMode";
 
 const navLinks = [
   { label: "Features", href: "#features" },
-  { label: "Preise", href: "#pricing" },
+  ...(isBetaMode ? [] : [{ label: "Preise", href: "#pricing" }]),
   { label: "Download", href: "#download" },
 ];
 
@@ -51,13 +52,23 @@ export default function Navbar() {
           >
             Anmelden
           </Link>
-          <button
-            onClick={() => startCheckout("yearly")}
-            className="inline-flex items-center gap-1.5 rounded-lg bg-primary px-4 py-2 text-sm font-semibold text-white transition-colors hover:bg-primary-dark"
-          >
-            7 Tage gratis testen
-            <ArrowRight size={15} />
-          </button>
+          {isBetaMode ? (
+            <Link
+              href="/signup"
+              className="inline-flex items-center gap-1.5 rounded-lg bg-primary px-4 py-2 text-sm font-semibold text-white transition-colors hover:bg-primary-dark"
+            >
+              Kostenlos testen
+              <ArrowRight size={15} />
+            </Link>
+          ) : (
+            <button
+              onClick={() => startCheckout("yearly")}
+              className="inline-flex items-center gap-1.5 rounded-lg bg-primary px-4 py-2 text-sm font-semibold text-white transition-colors hover:bg-primary-dark"
+            >
+              7 Tage gratis testen
+              <ArrowRight size={15} />
+            </button>
+          )}
         </div>
 
         {/* Mobile Menu Button */}
@@ -92,13 +103,24 @@ export default function Navbar() {
             >
               Anmelden
             </Link>
-            <button
-              onClick={() => { setMobileOpen(false); startCheckout("yearly"); }}
-              className="mt-1 inline-flex items-center justify-center gap-1.5 rounded-lg bg-primary px-3 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-primary-dark"
-            >
-              7 Tage gratis testen
-              <ArrowRight size={15} />
-            </button>
+            {isBetaMode ? (
+              <Link
+                href="/signup"
+                onClick={() => setMobileOpen(false)}
+                className="mt-1 inline-flex items-center justify-center gap-1.5 rounded-lg bg-primary px-3 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-primary-dark"
+              >
+                Kostenlos testen
+                <ArrowRight size={15} />
+              </Link>
+            ) : (
+              <button
+                onClick={() => { setMobileOpen(false); startCheckout("yearly"); }}
+                className="mt-1 inline-flex items-center justify-center gap-1.5 rounded-lg bg-primary px-3 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-primary-dark"
+              >
+                7 Tage gratis testen
+                <ArrowRight size={15} />
+              </button>
+            )}
           </div>
         </div>
       )}

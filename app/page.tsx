@@ -7,8 +7,10 @@ import VideoSection from "@/components/VideoSection";
 import Testimonials from "@/components/Testimonials";
 import MidCTA from "@/components/MidCTA";
 import PricingCards from "@/components/PricingCards";
+import BetaPricing from "@/components/BetaPricing";
 import FAQ from "@/components/FAQ";
 import FinalCTA from "@/components/FinalCTA";
+import { isBetaMode } from "@/lib/betaMode";
 
 export default function Home() {
   return (
@@ -21,7 +23,7 @@ export default function Home() {
       <VideoSection />
       <Testimonials />
       <MidCTA />
-      <PricingCards />
+      {isBetaMode ? <BetaPricing /> : <PricingCards />}
       <FAQ />
       <FinalCTA />
     </>
