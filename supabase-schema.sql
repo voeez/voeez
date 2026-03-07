@@ -129,7 +129,29 @@ create trigger user_stats_set_updated_at
   for each row execute procedure public.set_updated_at();
 
 
+-- ── 6. FEEDBACK ──────────────────────────────────────────────
+-- Feedback aus der macOS-App (/api/feedback).
+
+create table if not exists public.feedback (
+  id         uuid        primary key default gen_random_uuid(),
+  user_id    uuid        references auth.users(id) on delete set null,
+  email      text        null,
+  text       text        not null,
+  created_at timestamptz not null default now()
+);
+
+alter table public.feedback enable row level security;
+
+-- Nur der Service-Role-Key (Backend) darf Feedback einfügen.
+-- (kein select-Policy für Nutzer nötig — Feedback ist nur für Admins sichtbar)
+create policy "Service kann Feedback einfügen"
+  on public.feedback for insert
+  with check (true);
+-- Hinweis: Da die API den Service-Role-Key nutzt, umgeht sie RLS ohnehin.
+-- Diese Policy ist ein Fallback falls anon-Key genutzt wird.
+
+
 -- ── FERTIG ───────────────────────────────────────────────────
 -- Danach in Supabase prüfen:
---   Table Editor → profiles & user_stats sollten erscheinen
+--   Table Editor → profiles, user_stats & feedback sollten erscheinen
 --   Authentication → Policies → RLS-Regeln sichtbar
