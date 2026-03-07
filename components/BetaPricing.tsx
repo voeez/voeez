@@ -40,21 +40,23 @@ export default function BetaPricing() {
 
         {/* Beta Card */}
         <ScrollReveal delay={100}>
-          <div className="mx-auto max-w-lg">
+          <div className="relative mx-auto max-w-lg">
+
+            {/* Goose — outside the card, overlapping the left edge */}
+            <div className="pointer-events-none absolute -left-12 bottom-8 z-20 hidden lg:block">
+              <Image
+                src="/images/goose-pricing.png"
+                alt=""
+                width={148}
+                height={148}
+                className="scale-x-[-1] opacity-90 drop-shadow-lg"
+              />
+            </div>
+
             <div className="relative overflow-hidden rounded-3xl border-2 border-primary/30 bg-surface p-8 shadow-xl shadow-primary/10">
 
               {/* Glow */}
               <div className="pointer-events-none absolute -top-20 -right-20 h-60 w-60 rounded-full bg-primary/10 blur-3xl" />
-
-              {/* Goose */}
-              <div className="absolute -bottom-2 -right-2 hidden sm:block pointer-events-none opacity-80">
-                <Image
-                  src="/images/goose-pricing.png"
-                  alt=""
-                  width={130}
-                  height={130}
-                />
-              </div>
 
               <div className="relative z-10">
                 {/* Badge */}
