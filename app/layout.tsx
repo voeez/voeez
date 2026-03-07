@@ -60,6 +60,10 @@ export const metadata: Metadata = {
       "Blitzschnelle Spracherkennung direkt auf deinem Mac. 7 Tage kostenlos testen.",
     images: ["/og-image.png"],
   },
+  icons: {
+    icon: "/favicon.ico",
+    apple: "/apple-touch-icon.png",
+  },
   robots: {
     index: true,
     follow: true,
