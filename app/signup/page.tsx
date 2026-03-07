@@ -2,7 +2,8 @@
 
 import { useState, useCallback } from "react";
 import Link from "next/link";
-import { Mail, Lock, UserPlus, AlertCircle, CheckCircle } from "lucide-react";
+import Image from "next/image";
+import { Mail, Lock, AlertCircle, CheckCircle } from "lucide-react";
 import { createClient } from "@/lib/supabase/client";
 import TurnstileWidget from "@/components/TurnstileWidget";
 
@@ -76,14 +77,20 @@ export default function SignupPage() {
         <div className="rounded-2xl border border-border/50 bg-surface p-8">
           {/* Header */}
           <div className="mb-8 text-center">
-            <div className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-2xl bg-primary/10">
-              <UserPlus className="h-7 w-7 text-primary" />
+            <div className="mx-auto mb-4 flex h-20 w-20 items-center justify-center">
+              <Image
+                src="/images/goose-hero.png"
+                alt="voeez Gans"
+                width={80}
+                height={80}
+                className="drop-shadow-md"
+              />
             </div>
             <h1 className="text-2xl font-bold text-foreground">
               Konto erstellen
             </h1>
             <p className="mt-2 text-sm text-muted">
-              Starte mit 7 Tagen kostenlos
+              30 Tage kostenlos — kein Risiko
             </p>
           </div>
 
