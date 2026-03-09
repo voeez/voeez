@@ -72,7 +72,7 @@ export async function POST(request: NextRequest) {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          from: "voeez Feedback <no-reply@voeez.com>",
+          from: "voeez Feedback <no-reply@noreply.voeez.com>",
           to: ["hello@voeez.com"],
           subject: `🪿 Feedback von ${user.email ?? "anonymem Nutzer"}`,
           html: `
