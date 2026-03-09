@@ -3,11 +3,13 @@
 import { useState, useCallback } from "react";
 import Link from "next/link";
 import Image from "next/image";
-import { Mail, Lock, AlertCircle, CheckCircle } from "lucide-react";
+import { Mail, Lock, User, AlertCircle, CheckCircle } from "lucide-react";
 import { createClient } from "@/lib/supabase/client";
 import TurnstileWidget from "@/components/TurnstileWidget";
 
 export default function SignupPage() {
+  const [firstName, setFirstName]             = useState("");
+  const [lastName, setLastName]               = useState("");
   const [email, setEmail]                     = useState("");
   const [password, setPassword]               = useState("");
   const [passwordConfirm, setPasswordConfirm] = useState("");
@@ -19,7 +21,6 @@ export default function SignupPage() {
   const handleCaptchaToken  = useCallback((token: string) => setCaptchaToken(token), []);
   const handleCaptchaExpire = useCallback(() => setCaptchaToken(null), []);
 
-  // Block submit until Turnstile passes (only when site key is configured)
   const captchaRequired = Boolean(process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY);
   const canSubmit       = !captchaRequired || Boolean(captchaToken);
 
@@ -49,7 +50,10 @@ export default function SignupPage() {
       const { error: authError } = await supabase.auth.signUp({
         email,
         password,
-        ...(captchaToken ? { options: { captchaToken } } : {}),
+        options: {
+          data: { first_name: firstName, last_name: lastName },
+          ...(captchaToken ? { captchaToken } : {}),
+        },
       });
 
       if (authError) {
@@ -65,15 +69,15 @@ export default function SignupPage() {
     }
   }
 
+  const inputClass = "w-full rounded-xl border border-border bg-background py-3 pr-4 pl-10 text-sm text-foreground placeholder:text-muted/60 focus:border-primary focus:ring-1 focus:ring-primary focus:outline-none";
+
   return (
     <div className="flex min-h-screen items-center justify-center px-4 pt-16">
-      {/* Background glow */}
       <div className="pointer-events-none fixed inset-0">
         <div className="absolute top-1/4 left-1/2 h-[500px] w-[500px] -translate-x-1/2 rounded-full bg-primary/8 blur-3xl" />
       </div>
 
       <div className="relative w-full max-w-md">
-        {/* Card */}
         <div className="rounded-2xl border border-border/50 bg-surface p-8">
           {/* Header */}
           <div className="mb-8 text-center">
@@ -86,27 +90,19 @@ export default function SignupPage() {
                 className="drop-shadow-md"
               />
             </div>
-            <h1 className="text-2xl font-bold text-foreground">
-              Konto erstellen
-            </h1>
-            <p className="mt-2 text-sm text-muted">
-              30 Tage kostenlos — kein Risiko
-            </p>
+            <h1 className="text-2xl font-bold text-foreground">Konto erstellen</h1>
+            <p className="mt-2 text-sm text-muted">30 Tage kostenlos — kein Risiko</p>
           </div>
 
-          {/* Success state */}
           {success ? (
             <div className="flex flex-col items-center gap-4 py-4">
               <div className="flex h-16 w-16 items-center justify-center rounded-full bg-green-500/10">
                 <CheckCircle className="h-8 w-8 text-green-400" />
               </div>
               <div className="text-center">
-                <h2 className="text-lg font-semibold text-foreground">
-                  Bestätigungsmail gesendet
-                </h2>
+                <h2 className="text-lg font-semibold text-foreground">Bestätigungsmail gesendet</h2>
                 <p className="mt-2 text-sm text-muted">
-                  Überprüfe dein E-Mail-Postfach und klicke auf den
-                  Bestätigungslink, um dein Konto zu aktivieren.
+                  Überprüfe dein E-Mail-Postfach und klicke auf den Bestätigungslink, um dein Konto zu aktivieren.
                 </p>
               </div>
               <Link
@@ -118,7 +114,6 @@ export default function SignupPage() {
             </div>
           ) : (
             <>
-              {/* Error */}
               {error && (
                 <div className="mb-6 flex items-start gap-3 rounded-lg border border-red-500/20 bg-red-500/10 px-4 py-3">
                   <AlertCircle className="mt-0.5 h-5 w-5 shrink-0 text-red-400" />
@@ -126,14 +121,48 @@ export default function SignupPage() {
                 </div>
               )}
 
-              {/* Form */}
               <form onSubmit={handleSubmit} className="flex flex-col gap-4">
+                {/* Name row */}
+                <div className="grid grid-cols-2 gap-3">
+                  <div>
+                    <label htmlFor="firstName" className="mb-1.5 block text-sm font-medium text-foreground">
+                      Vorname
+                    </label>
+                    <div className="relative">
+                      <User className="absolute top-1/2 left-3 h-5 w-5 -translate-y-1/2 text-muted" />
+                      <input
+                        id="firstName"
+                        type="text"
+                        required
+                        value={firstName}
+                        onChange={(e) => setFirstName(e.target.value)}
+                        placeholder="Max"
+                        className={inputClass}
+                      />
+                    </div>
+                  </div>
+                  <div>
+                    <label htmlFor="lastName" className="mb-1.5 block text-sm font-medium text-foreground">
+                      Nachname
+                    </label>
+                    <div className="relative">
+                      <User className="absolute top-1/2 left-3 h-5 w-5 -translate-y-1/2 text-muted" />
+                      <input
+                        id="lastName"
+                        type="text"
+                        required
+                        value={lastName}
+                        onChange={(e) => setLastName(e.target.value)}
+                        placeholder="Mustermann"
+                        className={inputClass}
+                      />
+                    </div>
+                  </div>
+                </div>
+
                 {/* Email */}
                 <div>
-                  <label
-                    htmlFor="email"
-                    className="mb-1.5 block text-sm font-medium text-foreground"
-                  >
+                  <label htmlFor="email" className="mb-1.5 block text-sm font-medium text-foreground">
                     E-Mail
                   </label>
                   <div className="relative">
@@ -145,17 +174,14 @@ export default function SignupPage() {
                       value={email}
                       onChange={(e) => setEmail(e.target.value)}
                       placeholder="name@beispiel.de"
-                      className="w-full rounded-xl border border-border bg-background py-3 pr-4 pl-10 text-sm text-foreground placeholder:text-muted/60 focus:border-primary focus:ring-1 focus:ring-primary focus:outline-none"
+                      className={inputClass}
                     />
                   </div>
                 </div>
 
                 {/* Password */}
                 <div>
-                  <label
-                    htmlFor="password"
-                    className="mb-1.5 block text-sm font-medium text-foreground"
-                  >
+                  <label htmlFor="password" className="mb-1.5 block text-sm font-medium text-foreground">
                     Passwort
                   </label>
                   <div className="relative">
@@ -167,17 +193,14 @@ export default function SignupPage() {
                       value={password}
                       onChange={(e) => setPassword(e.target.value)}
                       placeholder="Mindestens 6 Zeichen"
-                      className="w-full rounded-xl border border-border bg-background py-3 pr-4 pl-10 text-sm text-foreground placeholder:text-muted/60 focus:border-primary focus:ring-1 focus:ring-primary focus:outline-none"
+                      className={inputClass}
                     />
                   </div>
                 </div>
 
                 {/* Password Confirm */}
                 <div>
-                  <label
-                    htmlFor="passwordConfirm"
-                    className="mb-1.5 block text-sm font-medium text-foreground"
-                  >
+                  <label htmlFor="passwordConfirm" className="mb-1.5 block text-sm font-medium text-foreground">
                     Passwort bestätigen
                   </label>
                   <div className="relative">
@@ -189,18 +212,13 @@ export default function SignupPage() {
                       value={passwordConfirm}
                       onChange={(e) => setPasswordConfirm(e.target.value)}
                       placeholder="Passwort wiederholen"
-                      className="w-full rounded-xl border border-border bg-background py-3 pr-4 pl-10 text-sm text-foreground placeholder:text-muted/60 focus:border-primary focus:ring-1 focus:ring-primary focus:outline-none"
+                      className={inputClass}
                     />
                   </div>
                 </div>
 
-                {/* Cloudflare Turnstile CAPTCHA */}
-                <TurnstileWidget
-                  onToken={handleCaptchaToken}
-                  onExpire={handleCaptchaExpire}
-                />
+                <TurnstileWidget onToken={handleCaptchaToken} onExpire={handleCaptchaExpire} />
 
-                {/* Submit */}
                 <button
                   type="submit"
                   disabled={loading || !canSubmit}
@@ -217,13 +235,9 @@ export default function SignupPage() {
                 </button>
               </form>
 
-              {/* Footer link */}
               <p className="mt-6 text-center text-sm text-muted">
                 Schon ein Konto?{" "}
-                <Link
-                  href="/login"
-                  className="font-medium text-primary transition-colors hover:text-primary-dark"
-                >
+                <Link href="/login" className="font-medium text-primary transition-colors hover:text-primary-dark">
                   Anmelden
                 </Link>
               </p>

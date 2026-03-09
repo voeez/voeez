@@ -66,7 +66,9 @@ export default async function DashboardPage() {
   stats = data.stats;
 
   const displayName =
-    profile?.goose_name || "Gans";
+    user?.user_metadata?.first_name ||
+    profile?.goose_name ||
+    "";
   const isSubscribed =
     profile?.subscription_status === "active" ||
     profile?.subscription_status === "lifetime" ||
@@ -114,7 +116,7 @@ export default async function DashboardPage() {
         </div>
         <div>
           <h1 className="text-2xl font-bold text-foreground sm:text-3xl">
-            Willkommen, {displayName}!
+            {displayName ? `Willkommen, ${displayName}!` : "Willkommen!"}
           </h1>
           <p className="mt-1 text-muted">
             Hier ist dein Überblick auf einen Blick.
