@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useCallback } from "react";
+import { useState, useCallback, Suspense } from "react";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import { Mail, Lock, LogIn, AlertCircle } from "lucide-react";
@@ -8,7 +8,7 @@ import { createClient } from "@/lib/supabase/client";
 import TurnstileWidget from "@/components/TurnstileWidget";
 import OAuthButtons from "@/components/OAuthButtons";
 
-export default function LoginPage() {
+function LoginPageInner() {
   const router       = useRouter();
   const searchParams = useSearchParams();
   const appCallback  = searchParams.get("app_callback"); // e.g. "voeez://auth/callback"
@@ -193,5 +193,13 @@ export default function LoginPage() {
         </div>
       </div>
     </div>
+  );
+}
+
+export default function LoginPage() {
+  return (
+    <Suspense>
+      <LoginPageInner />
+    </Suspense>
   );
 }
