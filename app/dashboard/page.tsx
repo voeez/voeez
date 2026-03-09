@@ -53,7 +53,13 @@ export default async function DashboardPage() {
   const chartData: DailyDataPoint[] = [];
 
   const supabase = await createClient();
-  const { data: { user } } = await supabase.auth.getUser();
+  let user = null;
+  try {
+    const { data } = await supabase.auth.getUser();
+    user = data.user;
+  } catch {
+    redirect("/login");
+  }
   if (!user) redirect("/login");
   const data = await getUserData(supabase, user.id);
   profile = data.profile;

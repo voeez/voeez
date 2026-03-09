@@ -38,7 +38,13 @@ export default async function DashboardLayout({
   let profile: UserProfile | null = null;
 
   const supabase = await createClient();
-  const { data: { user } } = await supabase.auth.getUser();
+  let user = null;
+  try {
+    const { data } = await supabase.auth.getUser();
+    user = data.user;
+  } catch {
+    redirect("/login");
+  }
   if (!user) redirect("/login");
   email = user.email ?? "";
 

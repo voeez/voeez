@@ -81,9 +81,13 @@ export async function middleware(request: NextRequest) {
   });
 
   // Refresh the session (important for keeping the session alive)
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
+  let user = null;
+  try {
+    const { data } = await supabase.auth.getUser();
+    user = data.user;
+  } catch {
+    // Supabase unreachable (wrong URL/key) — fail open, protect /dashboard
+  }
 
   // Protect /dashboard routes - redirect to /login if not authenticated
   if (!user && request.nextUrl.pathname.startsWith("/dashboard")) {
