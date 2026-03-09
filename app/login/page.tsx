@@ -6,7 +6,6 @@ import { useRouter, useSearchParams } from "next/navigation";
 import { Mail, Lock, LogIn, AlertCircle } from "lucide-react";
 import { createClient } from "@/lib/supabase/client";
 import TurnstileWidget from "@/components/TurnstileWidget";
-import OAuthButtons from "@/components/OAuthButtons";
 
 function LoginPageInner() {
   const router       = useRouter();
@@ -100,16 +99,6 @@ function LoginPageInner() {
               <p className="text-sm text-red-400">{error}</p>
             </div>
           )}
-
-          {/* OAuth */}
-          <OAuthButtons appCallback={appCallback} />
-
-          {/* Divider */}
-          <div className="relative my-2 flex items-center">
-            <div className="flex-1 border-t border-border" />
-            <span className="mx-4 text-xs text-muted">oder mit E-Mail</span>
-            <div className="flex-1 border-t border-border" />
-          </div>
 
           {/* Form */}
           <form onSubmit={handleSubmit} className="flex flex-col gap-4">

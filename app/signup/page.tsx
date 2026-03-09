@@ -6,7 +6,6 @@ import Image from "next/image";
 import { Mail, Lock, User, AlertCircle, CheckCircle } from "lucide-react";
 import { createClient } from "@/lib/supabase/client";
 import TurnstileWidget from "@/components/TurnstileWidget";
-import OAuthButtons from "@/components/OAuthButtons";
 
 export default function SignupPage() {
   const [firstName, setFirstName]             = useState("");
@@ -121,16 +120,6 @@ export default function SignupPage() {
             </div>
           ) : (
             <>
-              {/* OAuth */}
-              <OAuthButtons />
-
-              {/* Divider */}
-              <div className="relative my-2 flex items-center">
-                <div className="flex-1 border-t border-border" />
-                <span className="mx-4 text-xs text-muted">oder mit E-Mail</span>
-                <div className="flex-1 border-t border-border" />
-              </div>
-
               {error && (
                 <div className="mb-6 flex items-start gap-3 rounded-lg border border-red-500/20 bg-red-500/10 px-4 py-3">
                   <AlertCircle className="mt-0.5 h-5 w-5 shrink-0 text-red-400" />
