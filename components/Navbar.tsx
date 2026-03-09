@@ -1,11 +1,12 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Link from "next/link";
 import Image from "next/image";
-import { Menu, X, ArrowRight } from "lucide-react";
+import { Menu, X, ArrowRight, LayoutDashboard } from "lucide-react";
 import { startCheckout } from "@/lib/checkout";
 import { isBetaMode } from "@/lib/betaMode";
+import { createClient } from "@/lib/supabase/client";
 
 const navLinks = [
   { label: "Features", href: "#features" },
@@ -15,6 +16,18 @@ const navLinks = [
 
 export default function Navbar() {
   const [mobileOpen, setMobileOpen] = useState(false);
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+
+  useEffect(() => {
+    const supabase = createClient();
+    supabase.auth.getSession().then(({ data }) => {
+      setIsLoggedIn(!!data.session);
+    });
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
+      setIsLoggedIn(!!session);
+    });
+    return () => subscription.unsubscribe();
+  }, []);
 
   return (
     <header className="fixed top-0 left-0 right-0 z-50 border-b border-border bg-background/90 backdrop-blur-lg">
@@ -46,28 +59,40 @@ export default function Navbar() {
 
         {/* Desktop CTA */}
         <div className="hidden items-center gap-3 md:flex">
-          <Link
-            href="/login"
-            className="rounded-lg px-4 py-2 text-sm font-medium text-muted transition-colors hover:text-foreground"
-          >
-            Anmelden
-          </Link>
-          {isBetaMode ? (
+          {isLoggedIn ? (
             <Link
-              href="/signup"
+              href="/dashboard"
               className="inline-flex items-center gap-1.5 rounded-lg bg-primary px-4 py-2 text-sm font-semibold text-white transition-colors hover:bg-primary-dark"
             >
-              Kostenlos testen
-              <ArrowRight size={15} />
+              <LayoutDashboard size={15} />
+              Dashboard
             </Link>
           ) : (
-            <button
-              onClick={() => startCheckout("yearly")}
-              className="inline-flex items-center gap-1.5 rounded-lg bg-primary px-4 py-2 text-sm font-semibold text-white transition-colors hover:bg-primary-dark"
-            >
-              7 Tage gratis testen
-              <ArrowRight size={15} />
-            </button>
+            <>
+              <Link
+                href="/login"
+                className="rounded-lg px-4 py-2 text-sm font-medium text-muted transition-colors hover:text-foreground"
+              >
+                Anmelden
+              </Link>
+              {isBetaMode ? (
+                <Link
+                  href="/signup"
+                  className="inline-flex items-center gap-1.5 rounded-lg bg-primary px-4 py-2 text-sm font-semibold text-white transition-colors hover:bg-primary-dark"
+                >
+                  Kostenlos testen
+                  <ArrowRight size={15} />
+                </Link>
+              ) : (
+                <button
+                  onClick={() => startCheckout("yearly")}
+                  className="inline-flex items-center gap-1.5 rounded-lg bg-primary px-4 py-2 text-sm font-semibold text-white transition-colors hover:bg-primary-dark"
+                >
+                  7 Tage gratis testen
+                  <ArrowRight size={15} />
+                </button>
+              )}
+            </>
           )}
         </div>
 
@@ -96,30 +121,43 @@ export default function Navbar() {
               </Link>
             ))}
             <hr className="my-2 border-border" />
-            <Link
-              href="/login"
-              onClick={() => setMobileOpen(false)}
-              className="rounded-lg px-3 py-2.5 text-sm font-medium text-muted transition-colors hover:bg-surface hover:text-foreground"
-            >
-              Anmelden
-            </Link>
-            {isBetaMode ? (
+            {isLoggedIn ? (
               <Link
-                href="/signup"
+                href="/dashboard"
                 onClick={() => setMobileOpen(false)}
                 className="mt-1 inline-flex items-center justify-center gap-1.5 rounded-lg bg-primary px-3 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-primary-dark"
               >
-                Kostenlos testen
-                <ArrowRight size={15} />
+                <LayoutDashboard size={15} />
+                Dashboard
               </Link>
             ) : (
-              <button
-                onClick={() => { setMobileOpen(false); startCheckout("yearly"); }}
-                className="mt-1 inline-flex items-center justify-center gap-1.5 rounded-lg bg-primary px-3 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-primary-dark"
-              >
-                7 Tage gratis testen
-                <ArrowRight size={15} />
-              </button>
+              <>
+                <Link
+                  href="/login"
+                  onClick={() => setMobileOpen(false)}
+                  className="rounded-lg px-3 py-2.5 text-sm font-medium text-muted transition-colors hover:bg-surface hover:text-foreground"
+                >
+                  Anmelden
+                </Link>
+                {isBetaMode ? (
+                  <Link
+                    href="/signup"
+                    onClick={() => setMobileOpen(false)}
+                    className="mt-1 inline-flex items-center justify-center gap-1.5 rounded-lg bg-primary px-3 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-primary-dark"
+                  >
+                    Kostenlos testen
+                    <ArrowRight size={15} />
+                  </Link>
+                ) : (
+                  <button
+                    onClick={() => { setMobileOpen(false); startCheckout("yearly"); }}
+                    className="mt-1 inline-flex items-center justify-center gap-1.5 rounded-lg bg-primary px-3 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-primary-dark"
+                  >
+                    7 Tage gratis testen
+                    <ArrowRight size={15} />
+                  </button>
+                )}
+              </>
             )}
           </div>
         </div>

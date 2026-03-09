@@ -2,13 +2,16 @@
 
 import { useState, useCallback } from "react";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { Mail, Lock, LogIn, AlertCircle } from "lucide-react";
 import { createClient } from "@/lib/supabase/client";
 import TurnstileWidget from "@/components/TurnstileWidget";
+import OAuthButtons from "@/components/OAuthButtons";
 
 export default function LoginPage() {
-  const router = useRouter();
+  const router       = useRouter();
+  const searchParams = useSearchParams();
+  const appCallback  = searchParams.get("app_callback"); // e.g. "voeez://auth/callback"
   const [email, setEmail]                     = useState("");
   const [password, setPassword]               = useState("");
   const [captchaToken, setCaptchaToken]       = useState<string | null>(null);
@@ -46,7 +49,16 @@ export default function LoginPage() {
         return;
       }
 
-      // Check for redirect parameter
+      // App deep link: redirect back to Mac app with tokens
+      if (appCallback?.startsWith("voeez://")) {
+        const { data: { session } } = await supabase.auth.getSession();
+        if (session) {
+          window.location.href = `${appCallback}?access_token=${session.access_token}&refresh_token=${session.refresh_token}`;
+          return;
+        }
+      }
+
+      // Normal web redirect
       const params = new URLSearchParams(window.location.search);
       const redirect = params.get("redirect") || "/dashboard";
       router.push(redirect);
@@ -88,6 +100,16 @@ export default function LoginPage() {
               <p className="text-sm text-red-400">{error}</p>
             </div>
           )}
+
+          {/* OAuth */}
+          <OAuthButtons appCallback={appCallback} />
+
+          {/* Divider */}
+          <div className="relative my-2 flex items-center">
+            <div className="flex-1 border-t border-border" />
+            <span className="mx-4 text-xs text-muted">oder mit E-Mail</span>
+            <div className="flex-1 border-t border-border" />
+          </div>
 
           {/* Form */}
           <form onSubmit={handleSubmit} className="flex flex-col gap-4">
