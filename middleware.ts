@@ -99,8 +99,20 @@ export async function middleware(request: NextRequest) {
 
   // Redirect authenticated users away from login/signup pages
   if (user && (request.nextUrl.pathname === "/login" || request.nextUrl.pathname === "/signup")) {
+    const appCallback = request.nextUrl.searchParams.get("app_callback");
+
+    // Already logged-in + app deep-link → send tokens directly to the Mac app
+    if (appCallback?.startsWith("voeez://")) {
+      const { data: { session } } = await supabase.auth.getSession();
+      if (session) {
+        const appUrl = `${appCallback}?access_token=${session.access_token}&refresh_token=${session.refresh_token}`;
+        return NextResponse.redirect(appUrl);
+      }
+    }
+
     const redirectUrl = request.nextUrl.clone();
     redirectUrl.pathname = "/dashboard";
+    redirectUrl.searchParams.delete("app_callback");
     return NextResponse.redirect(redirectUrl);
   }
 
