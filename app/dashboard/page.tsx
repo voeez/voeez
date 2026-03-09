@@ -1,8 +1,12 @@
 import { redirect } from "next/navigation";
 import Link from "next/link";
 import { createClient } from "@/lib/supabase/server";
-import { FileText, Clock, Feather, Bird, Crown, ArrowUpRight } from "lucide-react";
+import { FileText, Clock, Feather, Bird, Crown, ArrowUpRight, MessageSquarePlus, ThumbsUp } from "lucide-react";
 import ActivityChart, { DailyDataPoint } from "@/components/dashboard/ActivityChart";
+
+// Set this to your Canny board URL once you create a free account at canny.io
+// e.g. "https://voeez.canny.io"
+const FEATURE_BOARD_URL = "https://voeez.canny.io";
 
 
 interface UserStats {
@@ -165,6 +169,48 @@ export default async function DashboardPage() {
             </div>
           </div>
         ))}
+      </div>
+
+      {/* Beta feedback banner — always visible, helps collect early feedback */}
+      <div className="rounded-2xl border border-primary/30 bg-primary/5 p-6">
+        <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+          <div className="flex items-start gap-4">
+            <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-primary/10">
+              <span className="text-xl">🐣</span>
+            </div>
+            <div>
+              <div className="flex items-center gap-2">
+                <h2 className="font-semibold text-foreground">Du bist ein Beta-Nutzer</h2>
+                <span className="rounded-full bg-primary px-2 py-0.5 text-xs font-bold text-white">
+                  BETA
+                </span>
+              </div>
+              <p className="mt-1 text-sm text-muted">
+                Dein Feedback formt das Produkt direkt. Was vermisst du? Was nervt? Was liebst du?
+              </p>
+            </div>
+          </div>
+          <div className="flex shrink-0 flex-col gap-2 sm:flex-row">
+            <Link
+              href="/dashboard/feedback"
+              className="inline-flex items-center justify-center gap-2 rounded-xl border border-border px-4 py-2.5 text-sm font-medium text-foreground transition-colors hover:bg-surface-light"
+            >
+              <MessageSquarePlus className="h-4 w-4" />
+              Feedback geben
+            </Link>
+            <a
+              data-canny-link
+              href={FEATURE_BOARD_URL}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center justify-center gap-2 rounded-xl bg-primary px-4 py-2.5 text-sm font-semibold text-white shadow-md shadow-primary/25 transition-all hover:bg-primary-dark"
+            >
+              <ThumbsUp className="h-4 w-4" />
+              Features vorschlagen &amp; voten
+              <ArrowUpRight className="h-3.5 w-3.5" />
+            </a>
+          </div>
+        </div>
       </div>
 
       {/* Aktivitäts-Chart */}

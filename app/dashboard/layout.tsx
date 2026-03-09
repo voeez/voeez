@@ -1,14 +1,17 @@
 import { redirect } from "next/navigation";
 import Link from "next/link";
 import { createClient } from "@/lib/supabase/server";
-import { LayoutDashboard, User, CreditCard } from "lucide-react";
+import { LayoutDashboard, User, CreditCard, MessageSquarePlus } from "lucide-react";
 import DashboardLogout from "./DashboardLogout";
 import ActiveLink from "./ActiveLink";
+import CannyIdentify from "@/components/dashboard/CannyIdentify";
+import { generateCannyHash } from "@/lib/canny";
 
 const sidebarLinks = [
-  { label: "Übersicht", href: "/dashboard",        Icon: LayoutDashboard },
-  { label: "Konto",     href: "/dashboard/profil", Icon: User },
-  { label: "Abo",       href: "/dashboard/abo",    Icon: CreditCard },
+  { label: "Übersicht", href: "/dashboard",          Icon: LayoutDashboard },
+  { label: "Konto",     href: "/dashboard/profil",   Icon: User },
+  { label: "Abo",       href: "/dashboard/abo",      Icon: CreditCard },
+  { label: "Feedback",  href: "/dashboard/feedback", Icon: MessageSquarePlus },
 ];
 
 interface UserProfile {
@@ -61,7 +64,19 @@ export default async function DashboardLayout({
 
   const planLabel = subscriptionLabel(profile);
 
+  // Canny user identification — ties feedback to Supabase accounts
+  const cannyUser = {
+    id: user.id,
+    email: user.email ?? "",
+    name: user.user_metadata?.full_name ?? user.user_metadata?.name ?? user.email ?? "",
+    created: user.created_at ? new Date(user.created_at).toISOString() : undefined,
+    hash: generateCannyHash(user.id), // empty string if CANNY_API_KEY not set
+  };
+
   return (
+    <>
+    {/* Canny SDK — identifies the current user so feedback is linked to their account */}
+    <CannyIdentify user={cannyUser} />
     <div className="flex min-h-screen pt-16">
       {/* Sidebar */}
       <aside className="fixed top-16 left-0 z-40 hidden h-[calc(100vh-4rem)] w-64 flex-col border-r border-border/50 bg-surface md:flex">
@@ -117,5 +132,6 @@ export default async function DashboardLayout({
         </div>
       </main>
     </div>
+    </>
   );
 }
