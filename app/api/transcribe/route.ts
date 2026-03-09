@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@supabase/supabase-js";
+import { posthogServer } from "@/lib/posthog-server";
 
 // Groq accepts up to 25 MB — we cap at 24 MB to leave a margin
 const MAX_AUDIO_BYTES = 24 * 1024 * 1024;
@@ -74,15 +75,32 @@ export async function POST(request: NextRequest) {
     groqForm.append("temperature", "0.0");
     if (language && language.trim()) groqForm.append("language", language.trim());
 
+    const t0 = Date.now();
     const groqRes = await fetch("https://api.groq.com/openai/v1/audio/transcriptions", {
       method: "POST",
       headers: { Authorization: `Bearer ${groqApiKey}` },
       body: groqForm,
     });
+    const latency = (Date.now() - t0) / 1000;
 
     if (!groqRes.ok) {
       const errBody = await groqRes.text();
       console.error("[Transcribe] Groq error:", groqRes.status, errBody);
+
+      // Track failed transcription
+      posthogServer.capture({
+        distinctId: user.id,
+        event: "$ai_generation",
+        properties: {
+          $ai_provider: "groq",
+          $ai_model: "whisper-large-v3-turbo",
+          $ai_latency: latency,
+          $ai_error: `Groq error ${groqRes.status}`,
+          transcription_language: (language ?? "auto"),
+          audio_size_bytes: file.size,
+        },
+      });
+
       return NextResponse.json(
         { error: `Groq error ${groqRes.status}` },
         { status: 502 }
@@ -91,6 +109,22 @@ export async function POST(request: NextRequest) {
 
     const groqData = await groqRes.json();
     const text = ((groqData.text as string) ?? "").trim();
+
+    // ── 5. Track in PostHog ───────────────────────────────────────────────────
+    const wordCount = text.split(/\s+/).filter(Boolean).length;
+    posthogServer.capture({
+      distinctId: user.id,
+      event: "$ai_generation",
+      properties: {
+        $ai_provider: "groq",
+        $ai_model: "whisper-large-v3-turbo",
+        $ai_latency: latency,
+        transcription_language: (language ?? "auto"),
+        audio_size_bytes: file.size,
+        output_word_count: wordCount,
+        // Whisper doesn't return token counts, so omit $ai_input_tokens
+      },
+    });
 
     return NextResponse.json({ text });
   } catch (error) {

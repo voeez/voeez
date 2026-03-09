@@ -37,7 +37,7 @@ const securityHeaders = [
       "style-src 'self' 'unsafe-inline'",
       "img-src 'self' data: https:",
       "font-src 'self'",
-      "connect-src 'self' https://*.supabase.co https://api.stripe.com https://challenges.cloudflare.com",
+      "connect-src 'self' https://*.supabase.co https://api.stripe.com https://challenges.cloudflare.com https://eu.i.posthog.com https://eu-assets.i.posthog.com",
       "frame-src https://js.stripe.com https://hooks.stripe.com https://challenges.cloudflare.com",
       "object-src 'none'",
       "base-uri 'self'",
@@ -53,6 +53,20 @@ const nextConfig: NextConfig = {
         // Apply security headers to all routes
         source: "/(.*)",
         headers: securityHeaders,
+      },
+    ];
+  },
+
+  // Proxy PostHog through our domain to bypass ad-blockers
+  async rewrites() {
+    return [
+      {
+        source: "/ingest/static/:path*",
+        destination: "https://eu-assets.i.posthog.com/static/:path*",
+      },
+      {
+        source: "/ingest/:path*",
+        destination: "https://eu.i.posthog.com/:path*",
       },
     ];
   },

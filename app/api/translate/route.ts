@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@supabase/supabase-js";
+import { posthogServer } from "@/lib/posthog-server";
 
 const VALID_STATUSES = new Set(["active", "trialing", "lifetime"]);
 
@@ -82,7 +83,9 @@ export async function POST(request: NextRequest) {
 
     // ── 4. Forward to Groq LLM ────────────────────────────────────────────────
     const targetName = LANGUAGE_NAMES[targetLanguage] ?? targetLanguage;
+    const systemPrompt = `You are a translator. Translate the following text to ${targetName}. Output ONLY the translated text, nothing else. Preserve the original formatting and punctuation style.`;
 
+    const t0 = Date.now();
     const groqRes = await fetch("https://api.groq.com/openai/v1/chat/completions", {
       method: "POST",
       headers: {
@@ -92,19 +95,31 @@ export async function POST(request: NextRequest) {
       body: JSON.stringify({
         model: "llama-3.3-70b-versatile",
         messages: [
-          {
-            role: "system",
-            content: `You are a translator. Translate the following text to ${targetName}. Output ONLY the translated text, nothing else. Preserve the original formatting and punctuation style.`,
-          },
+          { role: "system", content: systemPrompt },
           { role: "user", content: text },
         ],
         temperature: 0.3,
       }),
     });
+    const latency = (Date.now() - t0) / 1000;
 
     if (!groqRes.ok) {
       const errBody = await groqRes.text();
       console.error("[Translate] Groq error:", groqRes.status, errBody);
+
+      // Track failed translation
+      posthogServer.capture({
+        distinctId: user.id,
+        event: "$ai_generation",
+        properties: {
+          $ai_provider: "groq",
+          $ai_model: "llama-3.3-70b-versatile",
+          $ai_latency: latency,
+          $ai_error: `Groq error ${groqRes.status}`,
+          target_language: targetLanguage,
+        },
+      });
+
       return NextResponse.json(
         { error: `Groq error ${groqRes.status}` },
         { status: 502 }
@@ -115,6 +130,26 @@ export async function POST(request: NextRequest) {
     const translated = (
       (groqData.choices?.[0]?.message?.content as string) ?? ""
     ).trim();
+
+    // ── 5. Track in PostHog ───────────────────────────────────────────────────
+    posthogServer.capture({
+      distinctId: user.id,
+      event: "$ai_generation",
+      properties: {
+        $ai_provider: "groq",
+        $ai_model: "llama-3.3-70b-versatile",
+        $ai_latency: latency,
+        $ai_input_tokens: groqData.usage?.prompt_tokens ?? null,
+        $ai_output_tokens: groqData.usage?.completion_tokens ?? null,
+        $ai_input: [
+          { role: "system", content: systemPrompt },
+          { role: "user", content: text },
+        ],
+        $ai_output_choices: groqData.choices ?? null,
+        target_language: targetLanguage,
+        input_word_count: text.split(/\s+/).filter(Boolean).length,
+      },
+    });
 
     return NextResponse.json({ text: translated });
   } catch (error) {
