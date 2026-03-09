@@ -2,15 +2,13 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import type { LucideIcon } from "lucide-react";
-
 interface Props {
   href: string;
-  icon: LucideIcon;
+  icon: React.ReactNode;
   children: React.ReactNode;
 }
 
-export default function ActiveLink({ href, icon: Icon, children }: Props) {
+export default function ActiveLink({ href, icon, children }: Props) {
   const pathname = usePathname();
   // Exact match for /dashboard, prefix match for sub-pages
   const isActive =
@@ -25,7 +23,7 @@ export default function ActiveLink({ href, icon: Icon, children }: Props) {
           : "text-muted hover:bg-surface-light hover:text-foreground"
       }`}
     >
-      <Icon className="h-5 w-5" />
+      {icon}
       {children}
     </Link>
   );
