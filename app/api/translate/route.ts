@@ -132,6 +132,9 @@ export async function POST(request: NextRequest) {
     ).trim();
 
     // ── 5. Track in PostHog ───────────────────────────────────────────────────
+    // NOTE: We deliberately send ONLY metadata — never the actual user content.
+    // Sending $ai_input / $ai_output_choices would transmit the user's dictated
+    // text to PostHog, which is personal data and not permitted under DSGVO.
     posthogServer.capture({
       distinctId: user.id,
       event: "$ai_generation",
@@ -141,11 +144,6 @@ export async function POST(request: NextRequest) {
         $ai_latency: latency,
         $ai_input_tokens: groqData.usage?.prompt_tokens ?? null,
         $ai_output_tokens: groqData.usage?.completion_tokens ?? null,
-        $ai_input: [
-          { role: "system", content: systemPrompt },
-          { role: "user", content: text },
-        ],
-        $ai_output_choices: groqData.choices ?? null,
         target_language: targetLanguage,
         input_word_count: text.split(/\s+/).filter(Boolean).length,
       },
