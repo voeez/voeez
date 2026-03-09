@@ -38,7 +38,7 @@ const features: Feature[] = [
     accent: "group-hover:shadow-violet-100/80",
   },
   {
-    image: "/images/multilanguage.png",
+    image: "/images/achievements.png",
     title: "Für dich gemacht",
     description:
       "Erstelle dein eigenes Wörterbuch und Abkürzungen, damit du gleiche Sachen nicht immer komplett sagen musst. Außerdem wächst deine Gans mit jedem Wort — Achievements, Skins, persönliche Stats.",

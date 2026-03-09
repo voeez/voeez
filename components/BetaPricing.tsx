@@ -49,7 +49,7 @@ export default function BetaPricing() {
                 alt=""
                 width={148}
                 height={148}
-                className="opacity-90 drop-shadow-lg"
+                className="scale-x-[-1] opacity-90 drop-shadow-lg"
               />
             </div>
 
