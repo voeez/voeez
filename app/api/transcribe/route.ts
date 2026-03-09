@@ -2,6 +2,9 @@ import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@supabase/supabase-js";
 import { posthogServer } from "@/lib/posthog-server";
 
+// Run on Vercel Edge Network — eliminates cold starts, runs at nearest PoP
+export const runtime = "edge";
+
 // Groq accepts up to 25 MB — we cap at 24 MB to leave a margin
 const MAX_AUDIO_BYTES = 24 * 1024 * 1024;
 
