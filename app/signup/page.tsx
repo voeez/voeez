@@ -207,6 +207,7 @@ export default function SignupPage() {
                       id="password"
                       type="password"
                       required
+                      autoComplete="new-password"
                       value={password}
                       onChange={(e) => setPassword(e.target.value)}
                       placeholder="Mindestens 6 Zeichen"
@@ -226,6 +227,7 @@ export default function SignupPage() {
                       id="passwordConfirm"
                       type="password"
                       required
+                      autoComplete="new-password"
                       value={passwordConfirm}
                       onChange={(e) => setPasswordConfirm(e.target.value)}
                       placeholder="Passwort wiederholen"
