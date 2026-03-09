@@ -13,6 +13,7 @@ export default function ProfilForm({ email }: Props) {
   const [emailStatus, setEmailStatus]     = useState<"idle" | "loading" | "success" | "error">("idle");
   const [emailError, setEmailError]       = useState("");
 
+  const [currentPassword, setCurrent]     = useState("");
   const [newPassword, setNewPassword]     = useState("");
   const [confirmPassword, setConfirm]     = useState("");
   const [pwStatus, setPwStatus]           = useState<"idle" | "loading" | "success" | "error">("idle");
@@ -50,9 +51,13 @@ export default function ProfilForm({ email }: Props) {
     setPwStatus("loading");
     try {
       const supabase = createClient();
+      // Verify current password first
+      const { error: signInError } = await supabase.auth.signInWithPassword({ email, password: currentPassword });
+      if (signInError) { setPwError("Aktuelles Passwort ist falsch."); setPwStatus("error"); return; }
       const { error } = await supabase.auth.updateUser({ password: newPassword });
       if (error) { setPwError(error.message); setPwStatus("error"); return; }
       setPwStatus("success");
+      setCurrent("");
       setNewPassword("");
       setConfirm("");
     } catch {
@@ -149,6 +154,14 @@ export default function ProfilForm({ email }: Props) {
             <input
               type="password"
               required
+              value={currentPassword}
+              onChange={(e) => setCurrent(e.target.value)}
+              placeholder="Aktuelles Passwort"
+              className={inputClass}
+            />
+            <input
+              type="password"
+              required
               value={newPassword}
               onChange={(e) => setNewPassword(e.target.value)}
               placeholder="Neues Passwort (min. 6 Zeichen)"
@@ -159,12 +172,12 @@ export default function ProfilForm({ email }: Props) {
               required
               value={confirmPassword}
               onChange={(e) => setConfirm(e.target.value)}
-              placeholder="Passwort bestätigen"
+              placeholder="Neues Passwort bestätigen"
               className={inputClass}
             />
             <button
               type="submit"
-              disabled={pwStatus === "loading" || !newPassword || !confirmPassword}
+              disabled={pwStatus === "loading" || !currentPassword || !newPassword || !confirmPassword}
               className="self-start rounded-xl bg-primary px-4 py-2 text-sm font-semibold text-white transition-colors hover:bg-primary-dark disabled:opacity-50"
             >
               {pwStatus === "loading" ? "Wird gespeichert…" : "Passwort ändern"}
