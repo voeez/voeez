@@ -1,9 +1,9 @@
-import { Keyboard, Mic, Type } from "lucide-react";
+import Image from "next/image";
 import ScrollReveal from "@/components/ScrollReveal";
 
 interface Step {
   number: number;
-  icon: React.ComponentType<{ size?: number; strokeWidth?: number }>;
+  image: string;
   title: string;
   description: string;
 }
@@ -11,21 +11,21 @@ interface Step {
 const steps: Step[] = [
   {
     number: 1,
-    icon: Keyboard,
+    image: "/images/flow1.png",
     title: "Kürzel drücken",
     description:
       "Einmal einrichten, überall nutzen. Drücke dein Tastenkürzel und voeez hört sofort zu.",
   },
   {
     number: 2,
-    icon: Mic,
+    image: "/images/flow2.png",
     title: "Einfach reden",
     description:
       "KI wandelt deine Sprache in präzisen, sauberen Text um — in Echtzeit.",
   },
   {
     number: 3,
-    icon: Type,
+    image: "/images/flow3.png",
     title: "Text erscheint",
     description:
       "Direkt da, wo du ihn brauchst. Kein Kopieren, kein Einfügen, kein App-Wechsel.",
@@ -51,42 +51,45 @@ export default function HowItWorks() {
         {/* Steps */}
         <div className="relative mt-16">
           {/* Connecting line - desktop */}
-          <div className="absolute top-8 right-[calc(16.67%)] left-[calc(16.67%)] hidden h-px bg-gradient-to-r from-transparent via-primary/30 to-transparent lg:block" />
+          <div className="absolute top-[68px] right-[calc(16.67%)] left-[calc(16.67%)] hidden h-px bg-gradient-to-r from-transparent via-primary/30 to-transparent lg:block" />
 
           <div className="flex flex-col items-center gap-12 lg:flex-row lg:gap-0">
-            {steps.map((step, index) => {
-              const Icon = step.icon;
-              return (
-                <ScrollReveal
-                  key={step.number}
-                  delay={index * 120}
-                  className="flex-1"
-                >
-                  <div className="flex flex-col items-center text-center">
-                    {/* Gradient circle with icon */}
-                    <div className="relative z-10 flex h-16 w-16 items-center justify-center rounded-full bg-gradient-to-br from-primary to-blue-600 shadow-lg shadow-primary/25 text-white">
-                      <Icon size={26} strokeWidth={1.8} />
-                      {/* Step number badge */}
-                      <span className="absolute -top-1 -right-1 flex h-5 w-5 items-center justify-center rounded-full bg-foreground text-xs font-bold text-white">
-                        {step.number}
-                      </span>
-                    </div>
-
-                    {/* Connecting line - mobile */}
-                    {step.number < 3 && (
-                      <div className="my-2 h-8 w-px bg-gradient-to-b from-primary/30 to-transparent lg:hidden" />
-                    )}
-
-                    <h3 className="mt-6 text-xl font-semibold text-foreground lg:mt-8">
-                      {step.title}
-                    </h3>
-                    <p className="mt-2 max-w-xs text-sm leading-relaxed text-muted">
-                      {step.description}
-                    </p>
+            {steps.map((step, index) => (
+              <ScrollReveal
+                key={step.number}
+                delay={index * 120}
+                className="flex-1"
+              >
+                <div className="flex flex-col items-center text-center">
+                  {/* Flow illustration */}
+                  <div className="relative z-10">
+                    <Image
+                      src={step.image}
+                      alt={step.title}
+                      width={136}
+                      height={136}
+                      className="object-contain drop-shadow-md"
+                    />
+                    {/* Step number badge */}
+                    <span className="absolute -top-1 -right-1 flex h-6 w-6 items-center justify-center rounded-full bg-primary text-xs font-bold text-white shadow">
+                      {step.number}
+                    </span>
                   </div>
-                </ScrollReveal>
-              );
-            })}
+
+                  {/* Connecting line - mobile */}
+                  {step.number < 3 && (
+                    <div className="my-2 h-8 w-px bg-gradient-to-b from-primary/30 to-transparent lg:hidden" />
+                  )}
+
+                  <h3 className="mt-5 text-xl font-semibold text-foreground">
+                    {step.title}
+                  </h3>
+                  <p className="mt-2 max-w-xs text-sm leading-relaxed text-muted">
+                    {step.description}
+                  </p>
+                </div>
+              </ScrollReveal>
+            ))}
           </div>
         </div>
       </div>

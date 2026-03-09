@@ -1,19 +1,19 @@
+import Image from "next/image";
+
 const apps = [
-  { emoji: "📧", name: "Mail" },
-  { emoji: "💬", name: "Slack" },
-  { emoji: "📝", name: "Notion" },
-  { emoji: "🐙", name: "GitHub" },
-  { emoji: "💻", name: "VS Code" },
-  { emoji: "📱", name: "WhatsApp" },
-  { emoji: "📄", name: "Google Docs" },
-  { emoji: "🎮", name: "Discord" },
-  { emoji: "✈️", name: "Telegram" },
-  { emoji: "📖", name: "Pages" },
-  { emoji: "📓", name: "Notes" },
-  { emoji: "⌨️", name: "Terminal" },
-  { emoji: "🔮", name: "Obsidian" },
-  { emoji: "🌐", name: "Safari" },
-  { emoji: "🖊️", name: "Word" },
+  { icon: "/icons/slack.png",    name: "Slack" },
+  { icon: "/icons/github.png",   name: "GitHub" },
+  { icon: "/icons/vscode.png",   name: "VS Code" },
+  { icon: "/icons/whatsapp.png", name: "WhatsApp" },
+  { icon: "/icons/telegram.png", name: "Telegram" },
+  { icon: "/icons/obsidian.png", name: "Obsidian" },
+  { icon: "/icons/safari.png",   name: "Safari" },
+  { icon: "/icons/chrome.png",   name: "Chrome" },
+  { icon: "/icons/outlook.png",  name: "Outlook" },
+  { icon: "/icons/teams.png",    name: "Teams" },
+  { icon: "/icons/terminal.png", name: "Terminal" },
+  { icon: "/icons/ppt.png",      name: "PowerPoint" },
+  { icon: "/icons/gemini.png",   name: "Gemini" },
 ];
 
 export default function AppTicker() {
@@ -35,14 +35,20 @@ export default function AppTicker() {
 
         <div
           className="flex gap-3"
-          style={{ animation: "marquee 25s linear infinite" }}
+          style={{ animation: "marquee 28s linear infinite" }}
         >
           {doubled.map((app, i) => (
             <div
               key={i}
               className="flex shrink-0 items-center gap-2.5 rounded-xl border border-border bg-background px-5 py-3 text-sm font-medium text-foreground shadow-sm"
             >
-              <span className="text-lg leading-none">{app.emoji}</span>
+              <Image
+                src={app.icon}
+                alt={app.name}
+                width={20}
+                height={20}
+                className="rounded-md"
+              />
               <span>{app.name}</span>
             </div>
           ))}

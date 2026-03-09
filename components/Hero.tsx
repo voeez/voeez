@@ -176,7 +176,7 @@ export default function Hero() {
 
           {/* Headline */}
           <h1 className="text-5xl font-extrabold leading-tight tracking-tight text-foreground sm:text-6xl lg:text-7xl">
-            Du tippst 60
+            Du tippst 45
             <br />
             Wörter pro Minute.
             <br />
@@ -187,7 +187,7 @@ export default function Hero() {
 
           <p className="mt-6 max-w-lg text-lg leading-relaxed text-muted">
             voeez macht aus allem, was du sagst, sofort präzisen Text — in
-            jeder App, auf jedem Mac. Kein Copy-Paste. Keine Unterbrechung.
+            jeder App, auf jedem Mac. Taste drücken, sprechen, fertig.
           </p>
 
           {/* CTAs */}
@@ -248,10 +248,25 @@ export default function Hero() {
         </div>
 
         {/* ── Graphic ── */}
-        <div className="relative flex flex-1 items-center justify-center">
+        <div className="relative flex flex-1 flex-col items-center justify-center">
           <div className="absolute h-80 w-80 rounded-full bg-gradient-to-br from-primary/12 to-indigo-300/12 blur-3xl" />
           <HeroGraphic />
-          {/* Floating goose illustration */}
+
+          {/* Goose — mobile: below mockup, centered, prominent */}
+          <div
+            className="mt-6 block lg:hidden pointer-events-none"
+            style={{ animation: "float 4s ease-in-out 1.5s infinite" }}
+          >
+            <NextImage
+              src="/images/goose-hero.png"
+              alt="Voeez Gans diktiert"
+              width={130}
+              height={130}
+              className="drop-shadow-xl"
+            />
+          </div>
+
+          {/* Goose — desktop: absolute bottom-left */}
           <div
             className="absolute -bottom-10 -left-6 hidden lg:block pointer-events-none"
             style={{ animation: "float 5s ease-in-out 1.5s infinite" }}

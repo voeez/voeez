@@ -1,10 +1,10 @@
 import Image from "next/image";
 
 const painPoints = [
-  "Du hast eine Idee — aber bis du fertig getippt hast, ist der Faden weg.",
+  "Du hast einen Gedanken — aber bis du fertig getippt hast, ist der Faden weg.",
   "Du schreibst E-Mails, Notizen, Kommentare — deine Hände sind müde, dein Kopf noch voll.",
   "Du springst zwischen Apps hin und her und verlierst jedes Mal deinen Fokus.",
-  "Am Ende des Tages weißt du, dass du schneller sein könntest — aber wie?",
+  "Am Ende des Tages weißt du, dass du mehr machen könntest — aber wie?",
 ];
 
 export default function PainSection() {

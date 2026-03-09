@@ -17,27 +17,27 @@ const avatarColors = [
 const testimonials: Testimonial[] = [
   {
     quote:
-      "Ich spare jeden Tag mindestens eine Stunde. Mein Posteingang ist leer, meine Notizen sind vollständig, und ich kann mich auf die eigentliche Arbeit konzentrieren.",
-    name: "Markus T.",
+      "Ich spare jeden Tag mindestens eine halbe Stunde. Mein Posteingang ist leer, meine Notizen sind vollständig, und ich kann mich auf die eigentliche Arbeit konzentrieren.",
+    name: "Marvin H.",
     role: "Freelance Designer",
     company: "Berlin",
-    initials: "MT",
+    initials: "MH",
   },
   {
     quote:
-      "Am ersten Tag hat voeez mir drei Stunden zurückgegeben. Ich hab jetzt mehr Texte, bessere Qualität und keine schmerzenden Handgelenke mehr.",
-    name: "Sarah L.",
+      "Am ersten Tag hat voeez mir direkt eine Stunde zurückgegeben. Ich kann jetzt direkt viel mehr schreiben und komme entspannter im Feierabend an.",
+    name: "Julia M.",
     role: "Product Managerin",
     company: "München",
-    initials: "SL",
+    initials: "JM",
   },
   {
     quote:
-      "Im Zug, offline, ohne WLAN — voeez läuft perfekt. Seitdem schreibe ich meine Meeting-Notizen in Echtzeit, ohne eine Sekunde nachzudenken.",
-    name: "Jonas W.",
-    role: "Software-Entwickler",
-    company: "Hamburg",
-    initials: "JW",
+      "Selbst wenn im ICE das WLAN wieder weg ist kann ich voeez weiter nutzen. Seitdem schreibe ich meine ganzen Gedanken nach einem Call direkt mit voeez auf und vergesse viel weniger.",
+    name: "Jonas G.",
+    role: "Produkt Manager",
+    company: "Berlin",
+    initials: "JG",
   },
 ];
 

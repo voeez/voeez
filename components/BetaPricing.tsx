@@ -42,14 +42,14 @@ export default function BetaPricing() {
         <ScrollReveal delay={100}>
           <div className="relative mx-auto max-w-lg">
 
-            {/* Goose — outside the card, overlapping the left edge */}
-            <div className="pointer-events-none absolute -left-12 bottom-8 z-20 hidden lg:block">
+            {/* Goose — outside the card, overlapping the right edge (desktop) */}
+            <div className="pointer-events-none absolute -right-12 bottom-8 z-20 hidden lg:block">
               <Image
                 src="/images/goose-pricing.png"
                 alt=""
                 width={148}
                 height={148}
-                className="scale-x-[-1] opacity-90 drop-shadow-lg"
+                className="opacity-90 drop-shadow-lg"
               />
             </div>
 
@@ -96,6 +96,18 @@ export default function BetaPricing() {
                 </p>
               </div>
             </div>
+          </div>
+
+          {/* Goose — mobile: centered below card */}
+          <div className="mt-6 flex justify-center lg:hidden pointer-events-none">
+            <Image
+              src="/images/goose-pricing.png"
+              alt=""
+              width={110}
+              height={110}
+              className="opacity-90 drop-shadow-lg"
+              style={{ animation: "float 4s ease-in-out infinite" }}
+            />
           </div>
         </ScrollReveal>
 
