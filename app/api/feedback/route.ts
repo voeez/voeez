@@ -32,7 +32,7 @@ export async function POST(request: NextRequest) {
     }
 
     // ── 2. Parse + validate body ───────────────────────────────────────────────
-    let body: { text?: string };
+    let body: { text?: string; category?: string };
     try {
       body = await request.json();
     } catch {
@@ -47,10 +47,12 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: "Feedback too long (max 5000 chars)." }, { status: 422 });
     }
 
+    const category = (body.category ?? "general").trim();
+
     // ── 3. Save to Supabase ────────────────────────────────────────────────────
     const { error: insertError } = await supabase
       .from("feedback")
-      .insert({ user_id: user.id, email: user.email ?? null, text });
+      .insert({ user_id: user.id, email: user.email ?? null, text: `[${category}] ${text}` });
 
     if (insertError) {
       // Table might not exist yet — still send the email, don't break the UX
@@ -74,11 +76,12 @@ export async function POST(request: NextRequest) {
         body: JSON.stringify({
           from: "voeez Feedback <no-reply@noreply.voeez.com>",
           to: ["hello@voeez.com"],
-          subject: `🪿 Feedback von ${user.email ?? "anonymem Nutzer"}`,
+          subject: `🪿 Feedback [${category}] von ${user.email ?? "anonymem Nutzer"}`,
           html: `
             <h2 style="color:#3B82F6;">Neues Beta-Feedback 🪿</h2>
             <table style="border-collapse:collapse;margin-bottom:16px;">
               <tr><td style="padding:4px 12px 4px 0;color:#888;font-size:13px;">Von</td><td style="font-size:13px;">${user.email ?? "unbekannt"}</td></tr>
+              <tr><td style="padding:4px 12px 4px 0;color:#888;font-size:13px;">Kategorie</td><td style="font-size:13px;">${category}</td></tr>
               <tr><td style="padding:4px 12px 4px 0;color:#888;font-size:13px;">User ID</td><td style="font-size:13px;font-family:monospace;">${user.id}</td></tr>
               <tr><td style="padding:4px 12px 4px 0;color:#888;font-size:13px;">Datum</td><td style="font-size:13px;">${new Date().toLocaleString("de-DE", { timeZone: "Europe/Berlin" })}</td></tr>
             </table>
