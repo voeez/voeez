@@ -19,6 +19,10 @@ create table if not exists public.profiles (
   goose_name             text        null,
   beta_until             timestamptz null,
   -- Beta-Zugang läuft bis zu diesem Datum (null = kein Beta-Zugang)
+  tos_accepted_at        timestamptz null,
+  -- Zeitstempel der ToS/Datenschutz-Zustimmung beim Signup
+  tos_version            text        null,
+  -- Version der akzeptierten Bedingungen, z.B. '2026-03'
   updated_at             timestamptz not null default now()
 );
 
@@ -87,8 +91,20 @@ language plpgsql
 security definer set search_path = public
 as $$
 begin
-  insert into public.profiles (id, subscription_status, beta_until)
-  values (new.id, 'inactive', now() + interval '30 days')
+  insert into public.profiles (
+    id,
+    subscription_status,
+    beta_until,
+    tos_accepted_at,
+    tos_version
+  )
+  values (
+    new.id,
+    'inactive',
+    now() + interval '30 days',
+    (new.raw_user_meta_data->>'tos_accepted_at')::timestamptz,
+    new.raw_user_meta_data->>'tos_version'
+  )
   on conflict (id) do nothing;
   return new;
 end;
@@ -149,6 +165,41 @@ create policy "Service kann Feedback einfügen"
   with check (true);
 -- Hinweis: Da die API den Service-Role-Key nutzt, umgeht sie RLS ohnehin.
 -- Diese Policy ist ein Fallback falls anon-Key genutzt wird.
+
+
+-- ── MIGRATION: ToS-Felder nachrüsten (für bestehende Datenbanken) ──────────
+-- Nur ausführen wenn die Spalten noch nicht existieren.
+-- Im Supabase SQL-Editor ausführen.
+
+alter table public.profiles
+  add column if not exists tos_accepted_at timestamptz null,
+  add column if not exists tos_version     text        null;
+
+-- Trigger neu erstellen damit er tos_accepted_at/tos_version befüllt
+create or replace function public.handle_new_user()
+returns trigger
+language plpgsql
+security definer set search_path = public
+as $$
+begin
+  insert into public.profiles (
+    id,
+    subscription_status,
+    beta_until,
+    tos_accepted_at,
+    tos_version
+  )
+  values (
+    new.id,
+    'inactive',
+    now() + interval '30 days',
+    (new.raw_user_meta_data->>'tos_accepted_at')::timestamptz,
+    new.raw_user_meta_data->>'tos_version'
+  )
+  on conflict (id) do nothing;
+  return new;
+end;
+$$;
 
 
 -- ── FERTIG ───────────────────────────────────────────────────

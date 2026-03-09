@@ -37,9 +37,9 @@ export default function CookieBanner() {
         <p className="flex-1 text-sm text-muted leading-relaxed">
           Wir nutzen{" "}
           <strong className="text-foreground">technisch notwendige Cookies</strong>{" "}
-          für die Authentifizierung sowie{" "}
+          für die Authentifizierung sowie optionale{" "}
           <strong className="text-foreground">Analyse-Cookies</strong>{" "}
-          (PostHog), um zu verstehen wie die Website genutzt wird.{" "}
+          um zu verstehen, wie die Website genutzt wird.{" "}
           <Link
             href="/datenschutz"
             className="text-primary underline underline-offset-2 hover:text-primary-dark"

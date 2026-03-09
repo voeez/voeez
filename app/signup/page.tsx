@@ -15,6 +15,7 @@ export default function SignupPage() {
   const [password, setPassword]               = useState("");
   const [passwordConfirm, setPasswordConfirm] = useState("");
   const [captchaToken, setCaptchaToken]       = useState<string | null>(null);
+  const [tosAccepted, setTosAccepted]         = useState(false);
   const [error, setError]                     = useState("");
   const [success, setSuccess]                 = useState(false);
   const [loading, setLoading]                 = useState(false);
@@ -23,7 +24,7 @@ export default function SignupPage() {
   const handleCaptchaExpire = useCallback(() => setCaptchaToken(null), []);
 
   const captchaRequired = Boolean(process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY);
-  const canSubmit       = !captchaRequired || Boolean(captchaToken);
+  const canSubmit       = tosAccepted && (!captchaRequired || Boolean(captchaToken));
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -52,7 +53,12 @@ export default function SignupPage() {
         email,
         password,
         options: {
-          data: { first_name: firstName, last_name: lastName },
+          data: {
+            first_name: firstName,
+            last_name: lastName,
+            tos_accepted_at: new Date().toISOString(),
+            tos_version: "2026-03",
+          },
           ...(captchaToken ? { captchaToken } : {}),
         },
       });
@@ -229,6 +235,28 @@ export default function SignupPage() {
                 </div>
 
                 <TurnstileWidget onToken={handleCaptchaToken} onExpire={handleCaptchaExpire} />
+
+                {/* ToS + Privacy acceptance */}
+                <div className="flex items-start gap-3">
+                  <input
+                    type="checkbox"
+                    id="tosAccepted"
+                    checked={tosAccepted}
+                    onChange={(e) => setTosAccepted(e.target.checked)}
+                    className="mt-0.5 h-4 w-4 cursor-pointer rounded border-border accent-primary"
+                  />
+                  <label htmlFor="tosAccepted" className="cursor-pointer text-xs leading-relaxed text-muted">
+                    Ich habe die{" "}
+                    <Link href="/agb" className="text-primary underline underline-offset-2 hover:text-primary-dark">
+                      Nutzungsbedingungen
+                    </Link>{" "}
+                    und die{" "}
+                    <Link href="/datenschutz" className="text-primary underline underline-offset-2 hover:text-primary-dark">
+                      Datenschutzerklärung
+                    </Link>{" "}
+                    gelesen und stimme diesen zu.
+                  </label>
+                </div>
 
                 <button
                   type="submit"

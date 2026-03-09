@@ -62,6 +62,19 @@ export default function DatenschutzPage() {
               für Sicherheit und Betrieb (Rate Limiting, Spam-Schutz), nicht dauerhaft gespeichert
               (Art. 6 Abs. 1 lit. f DSGVO)
             </li>
+            <li>
+              <strong className="text-foreground">Nutzungsanalyse (Website)</strong> –
+              nach ausdrücklicher Einwilligung erfassen wir anonymisierte Nutzungsdaten
+              (aufgerufene Seiten, Klickpfade, Gerätekategorie). Keine Inhalte werden dabei
+              gespeichert. (Art. 6 Abs. 1 lit. a DSGVO)
+            </li>
+            <li>
+              <strong className="text-foreground">KI-Nutzungsmetadaten</strong> –
+              bei Nutzung der Transkriptions- und Übersetzungsfunktion protokollieren wir
+              Metadaten (Verarbeitungsdauer, Wortanzahl, Zielsprache) zur Qualitätssicherung.
+              Der Inhalt deiner Aufnahmen oder Texte wird dabei zu keinem Zeitpunkt
+              an Analysedienste übermittelt. (Art. 6 Abs. 1 lit. f DSGVO)
+            </li>
           </ul>
         </section>
 
@@ -146,20 +159,64 @@ export default function DatenschutzPage() {
               </p>
             </div>
 
+            <div>
+              <p className="font-medium text-foreground">PostHog (Webanalyse) — nur mit Einwilligung</p>
+              <p>
+                PostHog, Inc., San Francisco, USA — EU-Cloud: Daten werden ausschließlich auf
+                Servern in der EU gespeichert (eu.i.posthog.com). PostHog erfasst nach
+                ausdrücklicher Einwilligung anonymisierte Nutzungsdaten der Website
+                (Seitenaufrufe, Klickpfade, Gerätekategorie) sowie Metadaten zur
+                KI-Nutzung (Verarbeitungsdauer, Wortanzahl). Persönliche Inhalte werden
+                nicht übertragen. Mit PostHog besteht ein Auftragsverarbeitungsvertrag
+                (DPA) gemäß Art. 28 DSGVO. Die Einwilligung kann jederzeit im
+                Cookie-Banner widerrufen werden.{" "}
+                <a href="https://posthog.com/privacy" target="_blank" rel="noopener noreferrer" className="text-primary underline underline-offset-2">
+                  Datenschutz PostHog
+                </a>
+              </p>
+            </div>
+
+            <div>
+              <p className="font-medium text-foreground">Groq (KI-Verarbeitung)</p>
+              <p>
+                Groq, Inc., Mountain View, USA. Zur Transkription von Sprachdaten und
+                Übersetzung von Texten werden Anfragen über unsere Server an die Groq-API
+                weitergeleitet. Groq verarbeitet die Daten ausschließlich zur
+                Erbringung des Dienstes und speichert keine Inhalte dauerhaft.
+                Datenübertragung auf Basis von SCC.{" "}
+                <a href="https://groq.com/privacy-policy/" target="_blank" rel="noopener noreferrer" className="text-primary underline underline-offset-2">
+                  Datenschutz Groq
+                </a>
+              </p>
+            </div>
+
           </div>
         </section>
 
         {/* 4 */}
         <section>
           <h2 className="mb-3 text-base font-semibold">4. Cookies und lokaler Speicher</h2>
-          <p className="text-muted leading-relaxed">
-            Diese Website verwendet ausschließlich technisch notwendige Cookies
-            für die Authentifizierung (Session-Cookies von Supabase). Diese sind
-            zwingend erforderlich, damit du eingeloggt bleiben kannst. Es werden{" "}
-            <strong className="text-foreground">keine Tracking-, Analyse- oder Werbe-Cookies</strong>{" "}
-            eingesetzt. Da ausschließlich notwendige Cookies verwendet werden,
-            ist kein gesondertes Einverständnis erforderlich.
-          </p>
+          <div className="space-y-3 text-muted leading-relaxed">
+            <p>Diese Website verwendet folgende Arten von Speicher:</p>
+            <div>
+              <p className="font-medium text-foreground">Technisch notwendig (immer aktiv)</p>
+              <p>
+                Session-Cookies von Supabase zur Authentifizierung — zwingend
+                erforderlich, damit du eingeloggt bleiben kannst. Keine Einwilligung erforderlich.
+              </p>
+            </div>
+            <div>
+              <p className="font-medium text-foreground">Analyse (nur mit Einwilligung)</p>
+              <p>
+                Bei Zustimmung im Cookie-Banner speichern wir eine anonyme Nutzer-ID
+                im <strong className="text-foreground">lokalen Browserspeicher (localStorage)</strong>,
+                kein persistenter Tracking-Cookie. Damit analysieren wir, wie die Website
+                genutzt wird. Du kannst die Einwilligung jederzeit widerrufen, indem du
+                im Cookie-Banner „Nur notwendige" auswählst oder den Browser-Speicher löschst
+                (localStorage-Key: <code className="text-xs bg-surface-muted px-1 py-0.5 rounded">voeez-analytics-consent</code>).
+              </p>
+            </div>
+          </div>
         </section>
 
         {/* 5 */}
