@@ -65,7 +65,7 @@ export async function POST(request: NextRequest) {
         .replace(/</g, "&lt;")
         .replace(/>/g, "&gt;");
 
-      await fetch("https://api.resend.com/emails", {
+      const resendRes = await fetch("https://api.resend.com/emails", {
         method: "POST",
         headers: {
           Authorization: `Bearer ${resendKey}`,
@@ -89,6 +89,10 @@ export async function POST(request: NextRequest) {
           `,
         }),
       });
+      if (!resendRes.ok) {
+        const resendError = await resendRes.text();
+        console.error("[Feedback] Resend error:", resendRes.status, resendError);
+      }
     } else {
       console.warn("[Feedback] RESEND_API_KEY not set — email skipped.");
     }
