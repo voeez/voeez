@@ -17,10 +17,10 @@ export async function POST(request: NextRequest) {
     const token = authHeader.substring(7);
 
     const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
-    const serviceKey  = process.env.SUPABASE_SERVICE_ROLE_KEY;
+    const anonKey     = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
     const groqApiKey  = process.env.GROQ_API_KEY;
 
-    if (!supabaseUrl || !serviceKey) {
+    if (!supabaseUrl || !anonKey) {
       console.error("[Transcribe] Missing Supabase env vars.");
       return NextResponse.json({ error: "Server misconfigured." }, { status: 503 });
     }
@@ -29,23 +29,27 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: "Server misconfigured." }, { status: 503 });
     }
 
-    const supabase = createClient(supabaseUrl, serviceKey, {
-      auth: { persistSession: false },
+    // ── 2. Auth + subscription in one DB call ─────────────────────────────────
+    // The user's JWT is forwarded directly. PostgREST validates it server-side
+    // and RLS (`auth.uid() = id`) scopes the row to the token owner —
+    // so no separate auth.getUser() round-trip is needed.
+    const supabase = createClient(supabaseUrl, anonKey, {
+      global: { headers: { Authorization: `Bearer ${token}` } },
+      auth:   { persistSession: false },
     });
 
-    const { data: { user }, error: authError } = await supabase.auth.getUser(token);
-    if (authError || !user) {
+    const { data: profile, error: profileError } = await supabase
+      .from("profiles")
+      .select("id, subscription_status")
+      .maybeSingle();
+
+    if (profileError || !profile) {
       return NextResponse.json({ error: "Invalid or expired token." }, { status: 401 });
     }
 
-    // ── 2. Subscription check ─────────────────────────────────────────────────
-    const { data: profile } = await supabase
-      .from("profiles")
-      .select("subscription_status")
-      .eq("id", user.id)
-      .maybeSingle();
+    const userId = profile.id as string;
 
-    if (!profile || !VALID_STATUSES.has(profile.subscription_status ?? "")) {
+    if (!VALID_STATUSES.has(profile.subscription_status ?? "")) {
       return NextResponse.json({ error: "No active subscription." }, { status: 403 });
     }
 
@@ -89,7 +93,7 @@ export async function POST(request: NextRequest) {
 
       // Track failed transcription
       posthogServer.capture({
-        distinctId: user.id,
+        distinctId: userId,
         event: "$ai_generation",
         properties: {
           $ai_provider: "groq",
@@ -113,7 +117,7 @@ export async function POST(request: NextRequest) {
     // ── 5. Track in PostHog ───────────────────────────────────────────────────
     const wordCount = text.split(/\s+/).filter(Boolean).length;
     posthogServer.capture({
-      distinctId: user.id,
+      distinctId: userId,
       event: "$ai_generation",
       properties: {
         $ai_provider: "groq",
