@@ -19,11 +19,7 @@ const faqs: FAQItem[] = [
     answer:
       "Ja. Im Offline-Modus verlässt kein einziges Byte deinen Mac – alles läuft lokal auf deinem Gerät. Im Cloud-Modus werden Audiodaten mit TLS 1.2+ verschlüsselt übertragen und nicht gespeichert.",
   },
-  {
-    question: "Kann ich jederzeit kündigen?",
-    answer:
-      "Ja, jederzeit mit einem Klick – kein Anruf, keine Formulare. Das Abo endet automatisch zum nächsten Abrechnungsdatum. Und wenn du innerhalb von 30 Tagen unzufrieden bist, bekommst du jeden Cent zurück.",
-  },
+
   {
     question: "Was wenn ich kein WLAN habe?",
     answer:
