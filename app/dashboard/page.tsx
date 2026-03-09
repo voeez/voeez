@@ -6,7 +6,7 @@ import ActivityChart, { DailyDataPoint } from "@/components/dashboard/ActivityCh
 
 // Set this to your Canny board URL once you create a free account at canny.io
 // e.g. "https://voeez.canny.io"
-const FEATURE_BOARD_URL = "https://voeez.canny.io";
+const FEATURE_BOARD_URL = "https://voeez.canny.io/voeez-beta";
 
 
 interface UserStats {

@@ -4,7 +4,7 @@ import { useState } from "react";
 import { ArrowUpRight, CheckCircle, MessageSquarePlus, ThumbsUp } from "lucide-react";
 
 // Set this to your Canny board URL once you create a free account at canny.io
-const FEATURE_BOARD_URL = "https://voeez.canny.io";
+const FEATURE_BOARD_URL = "https://voeez.canny.io/voeez-beta";
 
 const CATEGORIES = [
   { value: "bug",      label: "🐛 Fehler melden" },
