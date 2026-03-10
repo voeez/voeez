@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<rss version="2.0" xmlns:sparkle="http://www.andymatuschak.org/xml-namespaces/sparkle">
+  <channel>
+    <title>Voeez Updates</title>
+    <link>https://voeez.com/appcast.xml</link>
+    <description>Voeez app updates</description>
+    <language>de</language>
+
+    <item>
+      <title>Version 1.0</title>
+      <pubDate>Mon, 10 Mar 2026 10:00:00 +0000</pubDate>
+      <sparkle:version>1</sparkle:version>
+      <sparkle:shortVersionString>1.0</sparkle:shortVersionString>
+      <sparkle:releaseNotesLink>https://voeez.com/changelog</sparkle:releaseNotesLink>
+      <enclosure
+        url="https://voeez.com/downloads/Voeez-1.0.zip"
+        sparkle:edSignature="REPLACE_WITH_SIGNATURE_FROM_SIGN_UPDATE"
+        length="0"
+        type="application/octet-stream"
+      />
+    </item>
+
+  </channel>
+</rss>

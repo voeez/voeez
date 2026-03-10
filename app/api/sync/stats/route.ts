@@ -2,6 +2,13 @@ import { NextRequest, NextResponse } from "next/server";
 import { createClient as createServerClient } from "@/lib/supabase/server";
 import { createClient } from "@supabase/supabase-js";
 
+interface DailyStatPoint {
+  date: string;          // "YYYY-MM-DD"
+  words: number;
+  minutes: number;
+  transcriptions: number;
+}
+
 interface StatsPayload {
   total_words: number;
   total_transcriptions: number;
@@ -10,6 +17,7 @@ interface StatsPayload {
   goose_stage?: string;
   feathers?: number;
   days_used?: number;
+  daily_stats?: DailyStatPoint[];
 }
 
 // POST: Upsert stats from macOS app (Bearer token auth)
@@ -101,6 +109,29 @@ export async function POST(request: NextRequest) {
       body.days_used = Math.min(Math.max(0, body.days_used), MAX_DAYS_USED);
     }
 
+    // Validate and sanitize daily_stats if provided
+    let dailyStats: DailyStatPoint[] | undefined;
+    if (Array.isArray(body.daily_stats)) {
+      const DATE_RE = /^\d{4}-\d{2}-\d{2}$/;
+      dailyStats = body.daily_stats
+        .filter(
+          (p) =>
+            p &&
+            typeof p.date === "string" &&
+            DATE_RE.test(p.date) &&
+            typeof p.words === "number" &&
+            typeof p.minutes === "number" &&
+            typeof p.transcriptions === "number"
+        )
+        .slice(0, 365) // hard cap — never store more than 1 year
+        .map((p) => ({
+          date: p.date,
+          words: Math.max(0, Math.min(p.words, 1_000_000)),
+          minutes: Math.max(0, Math.min(p.minutes, 10_000)),
+          transcriptions: Math.max(0, Math.min(p.transcriptions, 100_000)),
+        }));
+    }
+
     try {
       const { data, error } = await supabase
         .from("user_stats")
@@ -114,6 +145,7 @@ export async function POST(request: NextRequest) {
             goose_stage: body.goose_stage ?? "Egg",
             feathers: body.feathers ?? 0,
             days_used: body.days_used ?? 0,
+            ...(dailyStats !== undefined && { daily_stats: dailyStats }),
             updated_at: new Date().toISOString(),
           },
           { onConflict: "user_id" }

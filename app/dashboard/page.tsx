@@ -1,7 +1,7 @@
 import { redirect } from "next/navigation";
 import Link from "next/link";
 import { createClient } from "@/lib/supabase/server";
-import { FileText, Clock, Feather, Bird, Crown, ArrowUpRight, MessageSquarePlus, ThumbsUp } from "lucide-react";
+import { FileText, Clock, Feather, Bird, ArrowUpRight, MessageSquarePlus, ThumbsUp } from "lucide-react";
 import ActivityChart, { DailyDataPoint } from "@/components/dashboard/ActivityChart";
 
 // Set this to your Canny board URL once you create a free account at canny.io
@@ -14,6 +14,7 @@ interface UserStats {
   total_transcriptions: number;
   time_saved_minutes: number;
   goose_stage: string;
+  daily_stats?: DailyDataPoint[];
 }
 
 interface UserProfile {
@@ -40,7 +41,7 @@ async function getUserData(supabase: Awaited<ReturnType<typeof createClient>>, u
   try {
     const { data: statsData } = await supabase
       .from("user_stats")
-      .select("total_words, total_transcriptions, time_saved_minutes, goose_stage")
+      .select("total_words, total_transcriptions, time_saved_minutes, goose_stage, daily_stats")
       .eq("user_id", userId)
       .single();
     stats = statsData;
@@ -54,7 +55,7 @@ async function getUserData(supabase: Awaited<ReturnType<typeof createClient>>, u
 export default async function DashboardPage() {
   let profile: UserProfile | null = null;
   let stats: UserStats | null = null;
-  const chartData: DailyDataPoint[] = [];
+  let chartData: DailyDataPoint[] = [];
 
   const supabase = await createClient();
   let user = null;
@@ -68,16 +69,14 @@ export default async function DashboardPage() {
   const data = await getUserData(supabase, user.id);
   profile = data.profile;
   stats = data.stats;
+  if (Array.isArray(stats?.daily_stats)) {
+    chartData = stats.daily_stats;
+  }
 
   const displayName =
     user?.user_metadata?.first_name ||
     profile?.goose_name ||
     "";
-  const isSubscribed =
-    profile?.subscription_status === "active" ||
-    profile?.subscription_status === "lifetime" ||
-    profile?.subscription_status === "trialing";
-
   const isTrialing = profile?.subscription_status === "trialing";
 
   const statCards = [
@@ -215,99 +214,6 @@ export default async function DashboardPage() {
 
       {/* Aktivitäts-Chart */}
       <ActivityChart data={chartData} />
-
-      {/* Subscription status */}
-      <div className="rounded-2xl border border-border/50 bg-surface p-6">
-        <div className="flex items-start justify-between">
-          <div className="flex items-center gap-3">
-            <div
-              className={`flex h-11 w-11 items-center justify-center rounded-xl ${
-                isSubscribed ? "bg-gold/10" : "bg-surface-light"
-              }`}
-            >
-              <Crown
-                className={`h-5 w-5 ${isSubscribed ? "text-gold" : "text-muted"}`}
-              />
-            </div>
-            <div>
-              <h2 className="text-lg font-semibold text-foreground">
-                {isTrialing ? "Test aktiv" : isSubscribed ? "Pro Abo aktiv" : "Free Plan"}
-              </h2>
-              <p className="text-sm text-muted">
-                {isSubscribed
-                  ? `Plan: ${profile?.subscription_plan ?? "Pro"}`
-                  : "Upgrade für unbegrenzte Transkriptionen"}
-              </p>
-            </div>
-          </div>
-
-          {isSubscribed ? (
-            <Link
-              href="/dashboard/abo"
-              className="inline-flex items-center gap-1.5 rounded-xl border border-border px-4 py-2 text-sm font-medium text-foreground transition-colors hover:bg-surface-light"
-            >
-              Verwalten
-              <ArrowUpRight className="h-4 w-4" />
-            </Link>
-          ) : (
-            <Link
-              href="/dashboard/abo"
-              className="inline-flex items-center gap-1.5 rounded-xl bg-primary px-4 py-2 text-sm font-semibold text-white shadow-lg shadow-primary/25 transition-all hover:bg-primary-dark hover:shadow-xl hover:shadow-primary/30"
-            >
-              Auf Pro upgraden
-              <ArrowUpRight className="h-4 w-4" />
-            </Link>
-          )}
-        </div>
-      </div>
-
-      {/* Quick actions */}
-      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
-        <Link
-          href="/download"
-          className="flex items-center gap-4 rounded-2xl border border-border/50 bg-surface p-5 transition-colors hover:border-primary/30 hover:bg-surface-light"
-        >
-          <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-primary/10">
-            <Bird className="h-5 w-5 text-primary" />
-          </div>
-          <div>
-            <p className="font-medium text-foreground">App herunterladen</p>
-            <p className="text-sm text-muted">
-              Hol dir voeez für macOS
-            </p>
-          </div>
-        </Link>
-
-        <Link
-          href="/dashboard/profil"
-          className="flex items-center gap-4 rounded-2xl border border-border/50 bg-surface p-5 transition-colors hover:border-primary/30 hover:bg-surface-light"
-        >
-          <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-purple-400/10">
-            <Feather className="h-5 w-5 text-purple-400" />
-          </div>
-          <div>
-            <p className="font-medium text-foreground">Konto</p>
-            <p className="text-sm text-muted">
-              Account-Informationen ansehen
-            </p>
-          </div>
-        </Link>
-
-        <Link
-          href="/dashboard/abo"
-          className="flex items-center gap-4 rounded-2xl border border-border/50 bg-surface p-5 transition-colors hover:border-primary/30 hover:bg-surface-light"
-        >
-          <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-gold/10">
-            <Crown className="h-5 w-5 text-gold" />
-          </div>
-          <div>
-            <p className="font-medium text-foreground">Abo verwalten</p>
-            <p className="text-sm text-muted">
-              Plan, Rechnungen & Upgrade
-            </p>
-          </div>
-        </Link>
-      </div>
     </div>
   );
 }

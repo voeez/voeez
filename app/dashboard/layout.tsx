@@ -1,7 +1,7 @@
 import { redirect } from "next/navigation";
 import Link from "next/link";
 import { createClient } from "@/lib/supabase/server";
-import { LayoutDashboard, User, CreditCard, MessageSquarePlus } from "lucide-react";
+import { LayoutDashboard, User, CreditCard, MessageSquarePlus, Download } from "lucide-react";
 import DashboardLogout from "./DashboardLogout";
 import ActiveLink from "./ActiveLink";
 import CannyIdentify from "@/components/dashboard/CannyIdentify";
@@ -9,6 +9,7 @@ import { generateCannyHash } from "@/lib/canny";
 
 const sidebarLinks = [
   { label: "Übersicht", href: "/dashboard",          Icon: LayoutDashboard },
+  { label: "Download",  href: "/download",           Icon: Download },
   { label: "Konto",     href: "/dashboard/profil",   Icon: User },
   { label: "Abo",       href: "/dashboard/abo",      Icon: CreditCard },
   { label: "Feedback",  href: "/dashboard/feedback", Icon: MessageSquarePlus },

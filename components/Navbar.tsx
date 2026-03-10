@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react";
 import Link from "next/link";
 import Image from "next/image";
-import { Menu, X, ArrowRight, LayoutDashboard } from "lucide-react";
+import { Menu, X, ArrowRight, LayoutDashboard, Download } from "lucide-react";
 import { startCheckout } from "@/lib/checkout";
 import { isBetaMode } from "@/lib/betaMode";
 import { createClient } from "@/lib/supabase/client";
@@ -11,7 +11,6 @@ import { createClient } from "@/lib/supabase/client";
 const navLinks = [
   { label: "Features", href: "#features" },
   ...(isBetaMode ? [] : [{ label: "Preise", href: "#pricing" }]),
-  { label: "Download", href: "#download" },
 ];
 
 export default function Navbar() {
@@ -55,6 +54,13 @@ export default function Navbar() {
               {link.label}
             </Link>
           ))}
+          <Link
+            href="/download"
+            className="inline-flex items-center gap-1.5 rounded-lg border border-primary/40 bg-primary/10 px-3.5 py-1.5 text-sm font-semibold text-primary transition-colors hover:bg-primary/20"
+          >
+            <Download size={14} />
+            Download
+          </Link>
         </div>
 
         {/* Desktop CTA */}
@@ -120,6 +126,14 @@ export default function Navbar() {
                 {link.label}
               </Link>
             ))}
+            <Link
+              href="/download"
+              onClick={() => setMobileOpen(false)}
+              className="inline-flex items-center gap-2 rounded-lg border border-primary/40 bg-primary/10 px-3 py-2.5 text-sm font-semibold text-primary transition-colors hover:bg-primary/20"
+            >
+              <Download size={14} />
+              Download
+            </Link>
             <hr className="my-2 border-border" />
             {isLoggedIn ? (
               <Link
