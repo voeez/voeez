@@ -8,6 +8,14 @@ import ActivityChart, { DailyDataPoint } from "@/components/dashboard/ActivityCh
 // e.g. "https://voeez.canny.io"
 const FEATURE_BOARD_URL = "https://voeez.canny.io/voeez-beta";
 
+const GOOSE_STAGE_LABELS: Record<string, string> = {
+  egg:        "Ei",
+  eggCracked: "Gerissenes Ei",
+  kueken:     "Küken",
+  jungeGans:  "Junge Gans",
+  erwachsen:  "Erwachsene Gans",
+};
+
 
 interface UserStats {
   total_words: number;
@@ -103,7 +111,7 @@ export default async function DashboardPage() {
     },
     {
       label: "Gans-Stufe",
-      value: stats?.goose_stage ?? "Egg",
+      value: GOOSE_STAGE_LABELS[stats?.goose_stage ?? ""] ?? stats?.goose_stage ?? "Ei",
       icon: Bird,
       color: "text-purple-400",
       bgColor: "bg-purple-400/10",
