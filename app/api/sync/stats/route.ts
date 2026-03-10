@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
-import { createClient } from "@/lib/supabase/server";
+import { createClient as createServerClient } from "@/lib/supabase/server";
+import { createClient } from "@supabase/supabase-js";
 
 interface StatsPayload {
   total_words: number;
@@ -11,20 +12,37 @@ interface StatsPayload {
   days_used?: number;
 }
 
-// POST: Upsert stats from macOS app
+// POST: Upsert stats from macOS app (Bearer token auth)
 export async function POST(request: NextRequest) {
   try {
-    const supabase = await createClient();
-    const {
-      data: { user },
-    } = await supabase.auth.getUser();
-
-    if (!user) {
-      return NextResponse.json(
-        { error: "Nicht authentifiziert." },
-        { status: 401 }
-      );
+    const authHeader = request.headers.get("Authorization");
+    if (!authHeader?.startsWith("Bearer ")) {
+      return NextResponse.json({ error: "Nicht authentifiziert." }, { status: 401 });
     }
+    const token = authHeader.substring(7);
+
+    const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
+    const anonKey     = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
+    if (!supabaseUrl || !anonKey) {
+      return NextResponse.json({ error: "Server misconfigured." }, { status: 503 });
+    }
+
+    // Validate JWT via RLS-scoped profile query (same pattern as /api/transcribe)
+    const supabase = createClient(supabaseUrl, anonKey, {
+      global: { headers: { Authorization: `Bearer ${token}` } },
+      auth:   { persistSession: false },
+    });
+
+    const { data: profile, error: authError } = await supabase
+      .from("profiles")
+      .select("id")
+      .maybeSingle();
+
+    if (authError || !profile) {
+      return NextResponse.json({ error: "Nicht authentifiziert." }, { status: 401 });
+    }
+
+    const userId = profile.id as string;
 
     let body: StatsPayload;
     try {
@@ -88,7 +106,7 @@ export async function POST(request: NextRequest) {
         .from("user_stats")
         .upsert(
           {
-            user_id: user.id,
+            user_id: userId,
             total_words: body.total_words,
             total_transcriptions: body.total_transcriptions,
             time_saved_minutes: body.time_saved_minutes,
@@ -135,7 +153,7 @@ export async function POST(request: NextRequest) {
 // GET: Return current stats for the authenticated user
 export async function GET() {
   try {
-    const supabase = await createClient();
+    const supabase = await createServerClient();
     const {
       data: { user },
     } = await supabase.auth.getUser();
