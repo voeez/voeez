@@ -1,4 +1,4 @@
-import { Download, Monitor, Cpu, HardDrive } from "lucide-react";
+import { Download, Monitor, Cpu, HardDrive, ShieldAlert } from "lucide-react";
 
 const downloadUrl = process.env.NEXT_PUBLIC_DOWNLOAD_URL;
 const appVersion = process.env.NEXT_PUBLIC_APP_VERSION || "1.0";
@@ -70,6 +70,21 @@ export default function DownloadPage() {
           </>
         )}
       </div>
+
+      {/* Gatekeeper hint */}
+      {downloadUrl && (
+        <div className="flex items-start gap-3 rounded-2xl border border-amber-200 bg-amber-50 p-4 dark:border-amber-800/40 dark:bg-amber-900/10">
+          <ShieldAlert className="mt-0.5 h-5 w-5 shrink-0 text-amber-500" />
+          <div>
+            <p className="text-sm font-medium text-amber-800 dark:text-amber-400">Erster Start: macOS-Sicherheitshinweis</p>
+            <p className="mt-0.5 text-sm text-amber-700 dark:text-amber-500">
+              Beim ersten Öffnen zeigt macOS eine Warnung. Klicke die App im Finder mit{" "}
+              <strong>Rechtsklick → &quot;Öffnen&quot;</strong> an — dann erscheint ein Dialog mit &quot;Trotzdem öffnen&quot;.
+              Das ist einmalig nötig.
+            </p>
+          </div>
+        </div>
+      )}
 
       {/* System requirements */}
       <div>
