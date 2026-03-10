@@ -1,4 +1,4 @@
-import { Download, Monitor, Cpu, HardDrive, CheckCircle, Shield } from "lucide-react";
+import { Download, Monitor, Cpu, HardDrive } from "lucide-react";
 
 const downloadUrl = process.env.NEXT_PUBLIC_DOWNLOAD_URL;
 const appVersion = process.env.NEXT_PUBLIC_APP_VERSION || "1.0";
@@ -110,26 +110,6 @@ export default function DownloadPage() {
         </div>
       </div>
 
-      {/* Privacy note */}
-      <div className="flex items-start gap-4 rounded-2xl border border-border/50 bg-surface p-5">
-        <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-green-400/10">
-          <Shield className="h-5 w-5 text-green-400" />
-        </div>
-        <div>
-          <h3 className="text-sm font-semibold text-foreground">Privat by Design</h3>
-          <p className="mt-0.5 text-sm leading-relaxed text-muted">
-            voeez läuft komplett lokal auf deinem Mac. Deine Stimme verlässt dein Gerät nie.
-          </p>
-          <div className="mt-2 flex flex-wrap gap-4">
-            {["On-Device Processing", "Kein Cloud-Zwang", "DSGVO-konform"].map((label) => (
-              <div key={label} className="flex items-center gap-1.5">
-                <CheckCircle className="h-4 w-4 text-green-400" />
-                <span className="text-xs text-foreground">{label}</span>
-              </div>
-            ))}
-          </div>
-        </div>
-      </div>
     </div>
   );
 }
