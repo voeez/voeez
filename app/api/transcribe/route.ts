@@ -10,6 +10,22 @@ const MAX_AUDIO_BYTES = 24 * 1024 * 1024;
 
 const VALID_STATUSES = new Set(["active", "trialing", "lifetime"]);
 
+// ── Subscription cache ────────────────────────────────────────────────────────
+// Shared across requests on the same Edge worker instance.
+// Avoids a Supabase DB round-trip (~50–200 ms) on every transcription.
+// TTL: 30 min — short enough to pick up cancellations, long enough to matter.
+const subCache = new Map<string, { status: string; expiresAt: number }>();
+const CACHE_TTL_MS = 30 * 60 * 1000;
+
+/** Decode JWT payload without verifying signature — only used for cache key lookup. */
+function jwtSub(token: string): string | null {
+  try {
+    return (JSON.parse(atob(token.split(".")[1])) as { sub?: string }).sub ?? null;
+  } catch {
+    return null;
+  }
+}
+
 export async function POST(request: NextRequest) {
   try {
     // ── 1. Auth via Bearer token (sent by macOS app) ──────────────────────────
@@ -32,28 +48,45 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: "Server misconfigured." }, { status: 503 });
     }
 
-    // ── 2. Auth + subscription in one DB call ─────────────────────────────────
-    // The user's JWT is forwarded directly. PostgREST validates it server-side
-    // and RLS (`auth.uid() = id`) scopes the row to the token owner —
-    // so no separate auth.getUser() round-trip is needed.
-    const supabase = createClient(supabaseUrl, anonKey, {
-      global: { headers: { Authorization: `Bearer ${token}` } },
-      auth:   { persistSession: false },
-    });
+    // ── 2. Auth + subscription check (DB or cache) ───────────────────────────
+    const candidateId = jwtSub(token);
+    const cached = candidateId ? subCache.get(candidateId) : null;
+    const now = Date.now();
 
-    const { data: profile, error: profileError } = await supabase
-      .from("profiles")
-      .select("id, subscription_status")
-      .maybeSingle();
+    let userId: string;
 
-    if (profileError || !profile) {
-      return NextResponse.json({ error: "Invalid or expired token." }, { status: 401 });
-    }
+    if (cached && cached.expiresAt > now) {
+      // Fast path: subscription status is cached — skip the DB round-trip.
+      userId = candidateId!;
+      if (!VALID_STATUSES.has(cached.status)) {
+        return NextResponse.json({ error: "No active subscription." }, { status: 403 });
+      }
+    } else {
+      // Slow path: verify token + fetch subscription from DB.
+      // PostgREST validates the JWT server-side and RLS scopes the row to the token owner.
+      const supabase = createClient(supabaseUrl, anonKey, {
+        global: { headers: { Authorization: `Bearer ${token}` } },
+        auth:   { persistSession: false },
+      });
 
-    const userId = profile.id as string;
+      const { data: profile, error: profileError } = await supabase
+        .from("profiles")
+        .select("id, subscription_status")
+        .maybeSingle();
 
-    if (!VALID_STATUSES.has(profile.subscription_status ?? "")) {
-      return NextResponse.json({ error: "No active subscription." }, { status: 403 });
+      if (profileError || !profile) {
+        return NextResponse.json({ error: "Invalid or expired token." }, { status: 401 });
+      }
+
+      userId = profile.id as string;
+      const status = (profile.subscription_status as string) ?? "";
+
+      // Populate cache for subsequent requests
+      subCache.set(userId, { status, expiresAt: now + CACHE_TTL_MS });
+
+      if (!VALID_STATUSES.has(status)) {
+        return NextResponse.json({ error: "No active subscription." }, { status: 403 });
+      }
     }
 
     // ── 3. Parse multipart audio ──────────────────────────────────────────────
