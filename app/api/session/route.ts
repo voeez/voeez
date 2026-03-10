@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@supabase/supabase-js";
 
 export const runtime = "edge";
+export const preferredRegion = "iad1";
 
 const VALID_STATUSES = new Set(["active", "trialing", "lifetime"]);
 

@@ -2,8 +2,11 @@ import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@supabase/supabase-js";
 import { posthogServer } from "@/lib/posthog-server";
 
-// Run on Vercel Edge Network — eliminates cold starts, runs at nearest PoP
+// Run on Vercel Edge Network — eliminates cold starts
 export const runtime = "edge";
+// Pin to US East — physically close to Groq's servers (Virginia).
+// Eliminates the Europe→Groq(US)→Europe double-hop when user is in Europe.
+export const preferredRegion = "iad1";
 
 // Groq accepts up to 25 MB — we cap at 24 MB to leave a margin
 const MAX_AUDIO_BYTES = 24 * 1024 * 1024;
