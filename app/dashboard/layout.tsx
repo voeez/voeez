@@ -9,7 +9,7 @@ import { generateCannyHash } from "@/lib/canny";
 
 const sidebarLinks = [
   { label: "Übersicht", href: "/dashboard",          Icon: LayoutDashboard },
-  { label: "Download",  href: "/download",           Icon: Download },
+  { label: "Download",  href: "/dashboard/download",  Icon: Download },
   { label: "Konto",     href: "/dashboard/profil",   Icon: User },
   { label: "Abo",       href: "/dashboard/abo",      Icon: CreditCard },
   { label: "Feedback",  href: "/dashboard/feedback", Icon: MessageSquarePlus },
