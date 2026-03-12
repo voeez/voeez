@@ -6,6 +6,12 @@ export const preferredRegion = "iad1";
 
 const VALID_STATUSES = new Set(["active", "trialing", "lifetime"]);
 
+function isAuthorized(status: string, betaUntil: string | null): boolean {
+  if (VALID_STATUSES.has(status)) return true;
+  if (betaUntil && new Date(betaUntil) > new Date()) return true;
+  return false;
+}
+
 /**
  * POST /api/session
  * Verifies the user's Supabase JWT + subscription, then returns a
@@ -36,14 +42,17 @@ export async function POST(request: NextRequest) {
 
     const { data: profile, error } = await supabase
       .from("profiles")
-      .select("subscription_status")
+      .select("subscription_status, beta_until")
       .maybeSingle();
 
     if (error || !profile) {
       return NextResponse.json({ error: "Invalid or expired token." }, { status: 401 });
     }
 
-    if (!VALID_STATUSES.has(profile.subscription_status ?? "")) {
+    const status    = (profile.subscription_status as string) ?? "";
+    const betaUntil = (profile.beta_until as string | null) ?? null;
+
+    if (!isAuthorized(status, betaUntil)) {
       return NextResponse.json({ error: "No active subscription." }, { status: 403 });
     }
 

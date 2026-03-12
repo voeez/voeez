@@ -4,6 +4,12 @@ import { posthogServer } from "@/lib/posthog-server";
 
 const VALID_STATUSES = new Set(["active", "trialing", "lifetime"]);
 
+function isAuthorized(status: string, betaUntil: string | null): boolean {
+  if (VALID_STATUSES.has(status)) return true;
+  if (betaUntil && new Date(betaUntil) > new Date()) return true;
+  return false;
+}
+
 const LANGUAGE_NAMES: Record<string, string> = {
   de: "German",
   en: "English",
@@ -55,11 +61,14 @@ export async function POST(request: NextRequest) {
     // ── 2. Subscription check ─────────────────────────────────────────────────
     const { data: profile } = await supabase
       .from("profiles")
-      .select("subscription_status")
+      .select("subscription_status, beta_until")
       .eq("id", user.id)
       .maybeSingle();
 
-    if (!profile || !VALID_STATUSES.has(profile.subscription_status ?? "")) {
+    const status    = (profile?.subscription_status as string) ?? "";
+    const betaUntil = (profile?.beta_until as string | null) ?? null;
+
+    if (!profile || !isAuthorized(status, betaUntil)) {
       return NextResponse.json({ error: "No active subscription." }, { status: 403 });
     }
 

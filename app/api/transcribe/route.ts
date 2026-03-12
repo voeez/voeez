@@ -17,8 +17,15 @@ const VALID_STATUSES = new Set(["active", "trialing", "lifetime"]);
 // Shared across requests on the same Edge worker instance.
 // Avoids a Supabase DB round-trip (~50–200 ms) on every transcription.
 // TTL: 30 min — short enough to pick up cancellations, long enough to matter.
-const subCache = new Map<string, { status: string; expiresAt: number }>();
+const subCache = new Map<string, { status: string; betaUntil: string | null; expiresAt: number }>();
 const CACHE_TTL_MS = 30 * 60 * 1000;
+
+/** Active subscription OR valid beta period grants access. */
+function isAuthorized(status: string, betaUntil: string | null): boolean {
+  if (VALID_STATUSES.has(status)) return true;
+  if (betaUntil && new Date(betaUntil) > new Date()) return true;
+  return false;
+}
 
 /** Decode JWT payload without verifying signature — only used for cache key lookup. */
 function jwtSub(token: string): string | null {
@@ -61,7 +68,7 @@ export async function POST(request: NextRequest) {
     if (cached && cached.expiresAt > now) {
       // Fast path: subscription status is cached — skip the DB round-trip.
       userId = candidateId!;
-      if (!VALID_STATUSES.has(cached.status)) {
+      if (!isAuthorized(cached.status, cached.betaUntil)) {
         return NextResponse.json({ error: "No active subscription." }, { status: 403 });
       }
     } else {
@@ -74,7 +81,7 @@ export async function POST(request: NextRequest) {
 
       const { data: profile, error: profileError } = await supabase
         .from("profiles")
-        .select("id, subscription_status")
+        .select("id, subscription_status, beta_until")
         .maybeSingle();
 
       if (profileError || !profile) {
@@ -82,12 +89,13 @@ export async function POST(request: NextRequest) {
       }
 
       userId = profile.id as string;
-      const status = (profile.subscription_status as string) ?? "";
+      const status    = (profile.subscription_status as string) ?? "";
+      const betaUntil = (profile.beta_until as string | null) ?? null;
 
       // Populate cache for subsequent requests
-      subCache.set(userId, { status, expiresAt: now + CACHE_TTL_MS });
+      subCache.set(userId, { status, betaUntil, expiresAt: now + CACHE_TTL_MS });
 
-      if (!VALID_STATUSES.has(status)) {
+      if (!isAuthorized(status, betaUntil)) {
         return NextResponse.json({ error: "No active subscription." }, { status: 403 });
       }
     }
